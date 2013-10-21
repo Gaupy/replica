@@ -7,6 +7,7 @@ $4
 $5
 $6
 $7" > conf
+make opt
 ./comp conf
 cd results
 gcc ../LP/lp.c -o test -lglpk -fno-stack-protector 
