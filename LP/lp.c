@@ -10,8 +10,8 @@
 #define NAME_LENGTH 20 /* name each variable and constraint */
 
 /* I know global variables are harmful, but let's just use them. */
-int precMatrix[MAX_TASK][MAX_TASK];
-int serverSpeeds[MAX_SPEEDS];
+float precMatrix[MAX_TASK][MAX_TASK];
+float serverSpeeds[MAX_SPEEDS];
 int T; /* number of tree nodes */
 int S; /* number of servers */
 int K; /* number of speeds */
@@ -26,7 +26,7 @@ void show()
 	{
 		for (col = 1; col <= T; col++)
 		{
-			printf("%d\t", precMatrix[row][col]);
+			printf("%f\t", precMatrix[row][col]);
 		}
 		putchar('\n');
 	}
@@ -196,7 +196,7 @@ void solve()
 	int j, k, i;
 	int col;
 	int jt, mt, bt, colt; /* temporary variables for indexing */
-	long int temp;
+	double temp;
 	int col_ind;
 
 	glp_iocp param;
@@ -217,7 +217,7 @@ void solve()
 	temp = glp_mip_obj_val(lp);
 	if (glp_mip_status(lp) == GLP_OPT)
 	{
-	 	printf("\t %ld", temp);
+	 	printf("\t %lf", temp);
 	}
 	else
 	{
@@ -239,8 +239,9 @@ int main(int argc, char *argv[])
 	char *pch;
 	FILE *fp;
 	int k,i,j,t,s;
-	long int result_caml;
+	double result_caml;
 	int x;
+	double y;
 	if(argc != 4) {
        printf("Usage: %s number-of-rings\n",argv[0]);
        return 1;}
@@ -255,22 +256,22 @@ int main(int argc, char *argv[])
 
 	fp = fopen(name,"r");
 	printf("%d \t %d \t %d \t", t, s,i);
-	fscanf(fp,"%ld",&result_caml);
-	printf("%ld", result_caml);
+	fscanf(fp,"%lf",&result_caml);
+	printf("%lf", result_caml);
 	fscanf(fp,"%d",&K);
 	fscanf(fp,"%d",&T);
 	fscanf(fp,"%d",&S);
 	for(k = 1; k <= K; k++)
 	{
-		fscanf(fp,"%d",&x); 
-		serverSpeeds[k] = x;
+		fscanf(fp,"%lf",&y); 
+		serverSpeeds[k] = y;
 	}   
 	for (i = 1; i <= T;i++)
 	{
 		for(j = 1; j <= T;j++)
 		{
-			fscanf(fp,"%d",&x); 
-			precMatrix[i][j] = x;
+			fscanf(fp,"%lf",&y); 
+			precMatrix[i][j] = y;
 		}   
 	}
 
@@ -283,8 +284,8 @@ int main(int argc, char *argv[])
 	{
 		for(j = 1; j <= T;j++)
 		{
-			fscanf(fp,"%d",&x); 
-			precMatrix[i][j] = x;
+			fscanf(fp,"%lf",&y); 
+			precMatrix[i][j] = y;
 		}   
 	}
 
