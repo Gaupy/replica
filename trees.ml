@@ -7,7 +7,7 @@ let rec addn l t vmax = (*adds a node in tree t, this nodes is the son of node w
     begin
       let Node(fl,ent) = t in
       let tfl = List.length fl in
-      (Node(fl@([Node([],Random.int vmax)]),ent),tfl)
+      (Node(fl@([Node([],Random.float vmax)]),ent),tfl)
     end
   |p::q ->
     begin
@@ -20,7 +20,7 @@ let rec addn l t vmax = (*adds a node in tree t, this nodes is the son of node w
 let cree_alea n valmax = (* creates a random tree with n nodes and input smaller than valmax*)
   let valpossible = ref [[]] in
   let i = ref 0 in
-  let arbre_init = ref (Node([],Random.int valmax)) in
+  let arbre_init = ref (Node([],Random.float valmax)) in
   let add_node () =
     let taille = List.length (!valpossible) in
     let next = Random.int taille in
@@ -38,7 +38,7 @@ let cree_alea n valmax = (* creates a random tree with n nodes and input smaller
 let cree_alea_binaire n valmax = (* creates a random binary tree with n nodes and input smaller than valmax*) 
   let valpossible = ref [[]] in
   let i = ref 0 in
-  let arbre_init = ref (Node([],Random.int valmax)) in
+  let arbre_init = ref (Node([],Random.float valmax)) in
   let add_node () =
     let taille = List.length (!valpossible) in
     let next = Random.int taille in

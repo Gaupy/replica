@@ -1,4 +1,5 @@
 open Def
+open Printf
 
 let rec print_l l= (*prints an integer list (often the address of a node)*)
   match l with 
@@ -15,10 +16,10 @@ let rec print_arbre_v t =  (* Prints a tree so that it is recognized by Caml*)
   |Node(fl,ent) ->
     print_string "Node([";
     let rec apply l = match l with
-      |p::q -> print_arbre_v p; print_string ";"; apply q
-      |[] -> print_string "],"
+      |p::q -> print_arbre_v p; printf ";"; apply q
+      |[] -> printf "],"
     in
-    apply fl ; print_int ent ; print_string ")"
+    apply fl ; printf "%f)" ent;
   |Server(fl,w,ent) ->
     print_string "S";print_int (List.length fl);
     let rec apply l = match l with
@@ -31,7 +32,7 @@ let rec print_arbre_v t =  (* Prints a tree so that it is recognized by Caml*)
 let print_ar ar = 
   let n = Array.length ar in
   for i = 0 to (n-1) do
-    print_int i ; print_string " "; print_int (fst ar.(i));print_string " "; print_arbre_v (snd ar.(i)); print_newline ();
+    printf "%d %d " i (fst ar.(i)); print_arbre_v (snd ar.(i)); printf "\n";
   done
 
 (*let ens_satur tr taille = (*calcul l'ensemble des sommets saturés dans tr*)*)
@@ -81,7 +82,7 @@ let rec print_arbre t = match t with (* prints an arbre*)
     in
     print_string "("; apply fl ; print_string ")"
   |Server(fl,w,ent) ->
-    print_string "S";print_int (List.length fl);print_string "_" ; print_int w.w; 
+    printf "S%d_%f" (List.length fl) w.w; 
     let rec apply l = match l with
       |p::q -> print_arbre p; print_string ","; apply q
       |[] -> ()
@@ -96,32 +97,32 @@ let print_arbre_latex t =
       begin
 	if b then
 	  (
-	    Printf.fprintf stdout ("\\node [arn_r] {%d} child {node [arn_x] {%d}}\n") n.w ent;
+	    fprintf stdout ("\\node [arn_r] {%f} child {node [arn_x] {%f}}\n") n.w ent;
 	    apply_pal fl (i+1);
 	  )
 	else
 	  (
 	    print_tab i;
-	    Printf.fprintf stdout ("child{node [arn_r] {%d} child {node [arn_x] {%d}}\n") n.w ent;
+	    fprintf stdout ("child{node [arn_r] {%f} child {node [arn_x] {%f}}\n") n.w ent;
 	    apply_pal fl (i+1);
 	    print_tab i;
-	    Printf.fprintf stdout "}\n"
+	    fprintf stdout "}\n"
 	  )
       end
     |Node(fl,ent) -> 
       begin
 	if b then
 	  (
-	    Printf.fprintf stdout ("\\node [arn_n] {} child {node [arn_x] {%d}}\n") ent;
+	    fprintf stdout ("\\node [arn_n] {} child {node [arn_x] {%f}}\n") ent;
 	    apply_pal fl (i+1)
 	  )
 	else
 	  (
 	    print_tab i;
-	    Printf.fprintf stdout ("child{node [arn_n] {} child {node [arn_x] {%d}}\n") ent;
+	    fprintf stdout ("child{node [arn_n] {} child {node [arn_x] {%f}}\n") ent;
 	    apply_pal fl (i+1);
 	    print_tab i;
-	    Printf.fprintf stdout ("}\n")
+	    fprintf stdout ("}\n")
 	  )
       end
   and apply_pal l i= match l with

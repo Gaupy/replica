@@ -8,10 +8,10 @@ open Tools
 let algo_intelligent t n = 
   let accessible = ref [[]] in
   let tree = ref t in
-  let repmin = ref 0 in
+  let repmin = ref 0. in
   let repargmin = ref t in 
   for i = 1 to n do 
-    let mini = ref max_int in
+    let mini = ref max_float in
     let argmin = ref t in
     let choix = ref [] in
     let potentiel = ref [] in 
@@ -58,13 +58,13 @@ let algo_intelligent t n =
 let algo_gopi t n = (*Starting from an optimal solution with n servers, computes an optimal solution with n+1 servers: forall leaves of the server tree of the solution with n servers: - we remove the leaf, - we add two new servers and compute the solution. We keep the one that minimimzes the energy solution.*)
   let accessible = ref [[]] in
   let tree = ref t in
-  let repmin = ref 0 in
+  let repmin = ref 0. in
   let repargmin = ref t in
   let compt_decr = ref 0 in
 
 (*initialisation where we put the two first servers in the tree.*)
   for i = 1 to (min n 2) do
-    let mini = ref max_int in
+    let mini = ref max_float in
     let argmin = ref t in
     let choix = ref [] in
     let potentiel = ref [] in
@@ -96,7 +96,7 @@ let algo_gopi t n = (*Starting from an optimal solution with n servers, computes
   if n>2 then (*the algo only starts when we assign the 3rd server.*)
   begin
     for i = 3 to n do 
-    let mini = ref max_int in
+    let mini = ref max_float in
     let argmin = ref !tree in
     let choix = ref [] in
     let potentiel = ref [] in
@@ -109,7 +109,7 @@ let algo_gopi t n = (*Starting from an optimal solution with n servers, computes
     while (!continue && !nb < 1) do
       incr nb;
       let l = to_move (!argmin) in
-      let mini = ref (max_int) in
+      let mini = ref (max_float) in
       let rec applique li_to_move = 
        match li_to_move with
         |[] -> ()
@@ -179,11 +179,11 @@ let algo_gopi t n = (*Starting from an optimal solution with n servers, computes
 let greedy_7 t n = (*Given a solution to the problem with n servers, adds one server to minimize the power consumption, and then tries to permute every couple of servers to minimize the power consumption *)
   let accessible = ref [[]] in
   let tree = ref t in
-  let repmin = ref 0 in
+  let repmin = ref 0. in
   let repargmin = ref t in
 
   for i = 1 to n do
-    let mini = ref max_int in
+    let mini = ref max_float in
     let argmin = ref t in
     let choix = ref [] in
     let potentiel = ref [] in
@@ -222,7 +222,7 @@ let greedy_7 t n = (*Given a solution to the problem with n servers, adds one se
       incr nb;
       accessible := recalc_potentiel (!tree);
       let l = to_move (!argmin) in
-      let mini = ref (max_int) in
+      let mini = ref (max_float) in
       let rec applique li_to_move = match li_to_move with
 	|[] -> ()
 	|p::q ->
@@ -331,17 +331,17 @@ let permute_k tree k =
         remove_k_aux x t_test (j-1) 
       in
       List.fold_left tata (mini, argmin) movable_list
-  in remove_k_aux (max_int,tree) tree k
+  in remove_k_aux (max_float,tree) tree k
 
 
 let greedy_8 t n k = (*Given a solution to the problem with n servers, adds one server to minimize the power consumption, and then tries to permute every k-uple of servers to minimize the power consumption *)
 (*  let accessible = ref [[]] in*)
   let tree = ref t in
-  let repmin = ref 0 in
+  let repmin = ref 0. in
   let repargmin = ref t in
 
   for i = 1 to n do
-    let mini = ref max_int in
+    let mini = ref max_float in
     let argmin = ref t in
 (*    let choix = ref [] in*)
 (*    let potentiel = ref [] in*)
@@ -386,11 +386,11 @@ let greedy_8 t n k = (*Given a solution to the problem with n servers, adds one 
 let greedy_9 t n = (*Given a solution to the problem with n servers, adds one server to minimize the power consumption, and then tries to permute every couple of servers to minimize the power consumption *)
   let accessible = ref [[]] in
   let tree = ref t in
-  let repmin = ref 0 in
+  let repmin = ref 0. in
   let repargmin = ref t in
 
   for i = 1 to n do
-    let mini = ref max_int in
+    let mini = ref (max_float) in
     let argmin = ref t in
     let choix = ref [] in
     let potentiel = ref [] in
@@ -408,7 +408,7 @@ let energy,t_tree = add_k (!mini,!argmin) !tree 1 in
       incr nb;
       accessible := recalc_potentiel (!tree);
       let l = to_move (!argmin) in
-      let mini = ref (max_int) in
+      let mini = ref (max_float) in
       let rec applique li_to_move = match li_to_move with
 	|[] -> ()
 	|p::q ->

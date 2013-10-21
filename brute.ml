@@ -244,16 +244,16 @@ and apply_nss l = match l with (*Vérifie qu'aucun des fils d'un noeud (ou serve
 
 
 let rec tot tree = match tree with
-  |Node(fl,ent) -> ent + apply_tot fl
-  |Server(fl,n,ent) -> ent + apply_tot fl
+  |Node(fl,ent) -> ent +. apply_tot fl
+  |Server(fl,n,ent) -> ent +. apply_tot fl
 and apply_tot fl = match fl with
-  |p::q -> tot p + apply_tot q
-  |[] -> 0
+  |p::q -> tot p +. apply_tot q
+  |[] -> 0.
 
 
 let maxminl l =
-  let repmax = ref min_int in
-  let repmin = ref max_int in
+  let repmax = ref min_float in
+  let repmin = ref max_float in
   let rec aux l = match l with
     |p::q -> if p > !repmax then repmax := p ;  if p < !repmin then repmin := p ; aux q
     |[] -> ()
@@ -507,8 +507,8 @@ let n_brute_force t p =
   for j = 0 to (p-1) do
     repart.(j) <- 1
   done;
-  let min = ref max_int in
-  let argmin = ref (Node([],0)) in
+  let min = ref max_float in
+  let argmin = ref (Node([],0.)) in
   while (repart.(0) <> (-1)) do
     let l = n_tree_to_l n repart n_to_ad in
     let a = cree_tarbre t l [] in
@@ -527,7 +527,7 @@ let n_brute_force t p =
 
 let brute_force t (* l'arbre *) n (*le nombre de serveurs*) = (*brute force le positionnement optimal de n serveurs dans t*)
   let reparts = genere_placement t n [] in
-  let min = ref max_int in
+  let min = ref max_float in
   let argmin = ref [] in
   let rec recherche l = match l with
     |p::q ->
@@ -583,77 +583,77 @@ let brute_force t (* l'arbre *) n (*le nombre de serveurs*) = (*brute force le p
   (!min,!targmin)
 
 
-let ens_satur tr taille = (*calcul l'ensemble des sommets saturés dans tr*)
-  let rec tot tree = match tree with
-    |Node(fl,ent) -> ent + apply_tot fl
-    |Server(fl,n,ent) -> ent + apply_tot fl
-  and apply_tot fl = match fl with
-    |p::q -> tot p + apply_tot q
-    |[] -> 0
-  in
-  let t = tot tr in
-  let rep = ref [] in
-  let rec cre tree adr = match tree with
-    |Server(fl,n,ent) -> if (n.w > t/(taille) || (t mod taille = 0 && n.w = t/taille)) then rep := (List.rev adr) :: !(rep);
-      apply_cre fl adr 0
+(*let ens_satur tr taille = (*calcul l'ensemble des sommets saturés dans tr*)*)
+(*  let rec tot tree = match tree with*)
+(*    |Node(fl,ent) -> ent +. apply_tot fl*)
+(*    |Server(fl,n,ent) -> ent +. apply_tot fl*)
+(*  and apply_tot fl = match fl with*)
+(*    |p::q -> tot p +. apply_tot q*)
+(*    |[] -> 0.*)
+(*  in*)
+(*  let t = tot tr in*)
+(*  let rep = ref [] in*)
+(*  let rec cre tree adr = match tree with*)
+(*    |Server(fl,n,ent) -> if ((float_of_int n.w) > (float_of_int t)/(float_of_int taille) || ((float_of_int t) mod (float_of_int taille) = 0 && n.w = t/.taille)) then rep := (List.rev adr) :: !(rep);*)
+(*      apply_cre fl adr 0*)
 
-    |Node(fl,ent) -> ()
-  and apply_cre fl adr i = match fl with
-    |p::q -> 
-      cre p (i::adr);
-      apply_cre q adr (i+1)
-    |[] -> ()
-  in
-  cre tr [];
-!rep
+(*    |Node(fl,ent) -> ()*)
+(*  and apply_cre fl adr i = match fl with*)
+(*    |p::q -> *)
+(*      cre p (i::adr);*)
+(*      apply_cre q adr (i+1)*)
+(*    |[] -> ()*)
+(*  in*)
+(*  cre tr [];*)
+(*!rep*)
 
 
-let rec brute_force_a t n =
-  match n with
-    |1 -> (brute_force t 1,[[]])
-    |_ -> 
-      begin
+(*let rec brute_force_a t n =*)
+(*  match n with*)
+(*    |1 -> (brute_force t 1,[[]])*)
+(*    |_ -> *)
+(*      begin*)
 
-	let ((_,_),l) = brute_force_a t (n-1) in
-	let ls = remove_l l (mega_son_list t l) in
-	let m = n - (List.length l) in
-	let repart = genere_placement_a t m ls in
-	let reparts = ajoute_partout l repart in
-	let min = ref max_int in
-	let argmin = ref t in
-	let rec recherche l = match l with
-	  |p::q ->
-	    begin
-	      let a = cree_tarbre t p [] in
-	      let b = tarbre_to_arbre a in
-	      let _ = opt b in
-	      let c = puiss b in
-	      if (c < !min) then
-		begin
-		  min := c;
-		  argmin := a
-		end
-	      else
-		begin
-		  if c = (!min) then
-		    argmin := a
-		end;
-	      recherche q
-	    end
-	  |[]  -> ()
-	in
-	recherche reparts;
-	let e = ens_satur (!argmin) n in
-	let lfin = ajoutel e l in
-	((!min,!argmin),lfin)
-      end
+(*	let ((_,_),l) = brute_force_a t (n-1) in*)
+(*	let ls = remove_l l (mega_son_list t l) in*)
+(*	let m = n - (List.length l) in*)
+(*	let repart = genere_placement_a t m ls in*)
+(*	let reparts = ajoute_partout l repart in*)
+(*	let min = ref max_int in*)
+(*	let argmin = ref t in*)
+(*	let rec recherche l = match l with*)
+(*	  |p::q ->*)
+(*	    begin*)
+(*	      let a = cree_tarbre t p [] in*)
+(*	      let b = tarbre_to_arbre a in*)
+(*	      let _ = opt b in*)
+(*	      let c = puiss b in*)
+(*	      if (c < !min) then*)
+(*		begin*)
+(*		  min := c;*)
+(*		  argmin := a*)
+(*		end*)
+(*	      else*)
+(*		begin*)
+(*		  if c = (!min) then*)
+(*		    argmin := a*)
+(*		end;*)
+(*	      recherche q*)
+(*	    end*)
+(*	  |[]  -> ()*)
+(*	in*)
+(*	recherche reparts;*)
+(*	let e = ens_satur (!argmin) n in*)
+(*	let lfin = ajoutel e l in*)
+(*	((!min,!argmin),lfin)*)
+(*      end*)
 
 let rec verif_l l = match l with
   |p::q ->
     let b = tarbre_to_arbre p in
     let _ = opt b in
     let c = puiss b in
-    print_int c ; print_newline ();
+    print_float c ; print_newline ();
     verif_l q
   |[] -> ()
 

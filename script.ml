@@ -13,17 +13,17 @@ let () = Random.self_init ()
 
 (*Creation of a regular table of speeds*)
 let reg_tab_speeds n  max_speed= 
-  let sol = Array.make n 0 in
+  let sol = Array.make n 0. in
   for i=1 to n-1 do
-    sol.(i) <- i* (max_speed /(n-1))
+    sol.(i) <- (float_of_int i)*. (max_speed /. (float_of_int (n-1)))
   done;
   sol
 
 (*Creation of an irregular table of speeds. There can be equal speeds.*)
 let irreg_tab_speeds n  max_speed= 
-  let sol = Array.make n 0 in
+  let sol = Array.make n 0. in
   for i=1 to n-1 do
-    sol.(i) <- Random.int max_speed
+    sol.(i) <- Random.float max_speed
   done;
   Array.fast_sort compare sol;
   sol
@@ -31,11 +31,11 @@ let irreg_tab_speeds n  max_speed=
 
 let parse_config file =
   let chan = open_in file in
-  let rmax = int_of_string (input_line chan) in
+  let rmax = float_of_string (input_line chan) in
   let tree_type = int_of_string (input_line chan) in 
   let size_of_tree = int_of_string (input_line chan) in
   let number_of_speeds = int_of_string (input_line chan) in
-  let max_speed = int_of_string (input_line chan) in
+  let max_speed = float_of_string (input_line chan) in
   let regularity_speed = int_of_string (input_line chan) in
   let number_of_tests = int_of_string (input_line chan) in
   let () = close_in chan in
@@ -67,7 +67,7 @@ let script config_file =
         let result_discret_intel, matrix = algo_discret 0 tree (param.size_of_tree) j tab_of_speeds in
         let st = sprintf "results/size=%d_serv=%d_iter=%d.dat" (param.size_of_tree) j i in 
         let oo = open_out st in
-          fprintf oo "%d \n %d \t %d \t %d \n" result_discret_intel param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
+          fprintf oo "%f \n %d \t %d \t %d \n" result_discret_intel param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
           print_set_of_speeds tab_of_speeds oo;
           print_square_matrix first_matrix oo;
           print_square_matrix matrix oo;

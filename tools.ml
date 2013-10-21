@@ -86,34 +86,34 @@ let rec app f l = match l with
 
 let rec get_entree t = (* given a Tree of Node, sums every input*)
   match t with
-    |Node(fl,ent) -> ent + ap_get_entree fl
+    |Node(fl,ent) -> ent +. ap_get_entree fl
     |Server(_,_,_) -> failwith "Server not at his place"
 and ap_get_entree l = 
   match l with
-    |[] -> 0
-    |p::q -> get_entree p + (ap_get_entree q)
+    |[] -> 0.
+    |p::q -> get_entree p +. (ap_get_entree q)
 
 let rec tarbre_to_arbre t = (* transforms a tarbre in arbre *)
   match t with 
     |Node(fl,ent) -> failwith "node reached 2"
     |Server(fl,n,ent) -> 
       let a,b = ap_ta_to_t fl in
-      Noeud(a,n,ent+b)
+      Noeud(a,n,ent+.b)
 and ap_ta_to_t l = 
   match l with
-    |[] -> [],0
+    |[] -> [],0.
     |p::q ->
       begin
         let a,b = ap_ta_to_t q in
         match p with
-          |Node(fl,ent) -> (a,b+ get_entree (p))
+          |Node(fl,ent) -> (a,b+. get_entree (p))
           |Server(fl,_,ent) -> ((tarbre_to_arbre p)::a,b)
       end
 
 let rec cree_tarbre tarbre l adress= match tarbre with (* Allocates servers to the list of addresses l*)
   |Node(fl,ent) -> 
     if appart adress l then
-      Server(ap_cree_tarbre fl l adress 0,{n = 0 ; w = 0},ent)
+      Server(ap_cree_tarbre fl l adress 0,{n = 0 ; w = 0.},ent)
     else
       Node(fl,ent)
       |Server(_,_,_) -> failwith "server at wrong place"
@@ -202,14 +202,14 @@ let rec ajout_server t ad adinit = (* rajoute un serveur dans t à l'adresse ad 
 	  print_l ad;
 	  failwith "server already placed"
          |Node(fl,ent) -> 
-	  (Server(fl,{ n=0; w=0},ent),adresse_fils adinit (List.length fl))
+	  (Server(fl,{ n=0; w=0.},ent),adresse_fils adinit (List.length fl))
       end
 
 let lpop l = 
   l := List.tl !l
 
 let max_elements_of_list l = (*for a list of pairs sorted non-decreasingly according to the left element of each pairs, returns the list of pairs with the largest left element*) 
-  let aux = ref 0 in
+  let aux = ref 0. in
   if !l = [] then (failwith "") else (aux := fst (List.hd !l));
   let rep = ref [] in
   let rec maxs li = match li with
@@ -224,9 +224,9 @@ let rec addk k l =  (*substract 1 to the first k element of list l*)
   match l with
     |[] -> []
     |(a,b)::q ->
-      if (k = 0) then (a,b)::q else ( 
-        b.w <- b.w - 1;
-        (a-1,b)::(addk (k-1) q)
+      if (k <= 0.) then (a,b)::q else ( 
+        b.w <- b.w -. 1.;
+        (a-.1. ,b)::(addk (k-.1.) q)
       )
 
 (*let minf a b = if a < b then a else b*)
@@ -240,36 +240,36 @@ let rec opt tr = match tr with (* fonction qui calcule la répartition optimale 
     let lref = ref long in
     let lmax,maxl = max_elements_of_list lref in
     let deux = 
-       ref (if (!lref) <> [] then (fst (List.hd (!lref))) else (-1))
+       ref (if (!lref) <> [] then (fst (List.hd (!lref))) else (-1.))
     in
     (*print_newline ();*)
     while (!maxl > n.w) do
       let tl = List.length (!lmax) in
       (*print_int tl ; print_newline();*)
-      let diff = min (float_of_int (!maxl - !deux)) ((float_of_int (!maxl - n.w)) /. ((float_of_int tl) +. 1.)) in
+      let diff = min (!maxl -. !deux) ((!maxl -. n.w) /. ((float_of_int tl) +. 1.)) in
       if (diff >= 1.) then
 	begin
-	  n.w <- n.w + (int_of_float diff) * tl;
+	  n.w <- n.w +. diff *. (float_of_int tl);
 	  let rec add l diff = match l with
 	    |(a,b)::q ->
-	      b.w <- b.w - diff;
-	      (a - diff , b) :: (add q diff)
+	      b.w <- b.w -. diff;
+	      (a -. diff , b) :: (add q diff)
 	    |[] -> []
 	  in
-	  let l2 = add (!lmax) (int_of_float diff) in
+	  let l2 = add (!lmax) (diff) in
 	  lref := minsert (l2) (!lref);
 	end
       else
 	begin
-	  let k = !maxl - n.w in
-	  n.w <- n.w + k;
+	  let k = !maxl -. n.w in
+	  n.w <- n.w +. k;
 	  let l2 = addk k (!lmax) in
 	  lref := minsert (l2) (!lref);
 	end;
       let lmaxb,maxlb = max_elements_of_list lref in
       lmax := !lmaxb;
       maxl := !maxlb;
-      deux := if (!lref) <> [] then (fst (List.hd (!lref))) else (-1);
+      deux := if (!lref) <> [] then (fst (List.hd (!lref))) else (-1.);
     done;
     lref := minsert (!lmax) (!lref);
     insert (n.w,n) (!lref)
@@ -278,21 +278,21 @@ let rec puiss arbre =  (* returns the power of a tree (arbre)*)
   match arbre with
     |Noeud(fl,n,ent) -> 
       let a = n.w in
-      a*a*a + ap_puiss fl
+      a*.a*.a +. ap_puiss fl
 and ap_puiss l = 
   match l with
-    |[] -> 0
-    |p::q -> puiss p + (ap_puiss q)
+    |[] -> 0.
+    |p::q -> puiss p +. (ap_puiss q)
 
 let rec puisst arbre = match arbre with (* returns the power of a tarbre*)
   |Server(fl,n,ent) -> 
     let a = n.w in
-    a*a*a + ap_puisst fl
+    a*.a*.a +. ap_puisst fl
   |Node(fl,ent) -> 
     ap_puisst fl
 and ap_puisst l = match l with
-  |[] -> 0
-  |p::q -> puisst p + (ap_puisst q)
+  |[] -> 0.
+  |p::q -> puisst p +. (ap_puisst q)
     
     
 let rec no_son_server t = match t with
@@ -348,42 +348,42 @@ let rec opt_int tr = match tr with (* fonction qui calcule la répartition optim
     let lref = ref long in
     let lmax,maxl = max_elements_of_list lref in
     let deux = 
-       ref (if (!lref) <> [] then (fst (List.hd (!lref))) else (-1))
+       ref (if (!lref) <> [] then (fst (List.hd (!lref))) else (-1.))
     in
     (*print_newline ();*)
     while (!maxl > n.w) do
       let tl = List.length (!lmax) in
       (*print_int tl ; print_newline();*)
-      let diff = min (float_of_int (!maxl - !deux)) ((float_of_int (!maxl - n.w)) /. ((float_of_int tl) +. 1.)) in
+      let diff = min (!maxl -. !deux) ((!maxl -. n.w) /. ((float_of_int tl) +. 1.)) in
       if (diff >= 1.) then
 	begin
-	  n.w <- n.w + (int_of_float diff) * tl;
+	  n.w <- n.w +.  diff *. (float_of_int tl);
 	  let rec add l diff = match l with
 	    |(a,b)::q ->
-	      b.w <- b.w - diff;
-	      (a - diff , b) :: (add q diff)
+	      b.w <- b.w -. diff;
+	      (a -. diff , b) :: (add q diff)
 	    |[] -> []
 	  in
-	  let l2 = add (!lmax) (int_of_float diff) in
+	  let l2 = add (!lmax) (diff) in
 	  lref := minsert (l2) (!lref);
 	end
       else
 	begin
-	  let k = !maxl - n.w in
-	  n.w <- n.w + k;
+	  let k = !maxl -. n.w in
+	  n.w <- n.w +. k;
 	  let l2 = addk k (!lmax) in
 	  lref := minsert (l2) (!lref);
 	end;
       let lmaxb,maxlb = max_elements_of_list lref in
       lmax := !lmaxb;
       maxl := !maxlb;
-      deux := if (!lref) <> [] then (fst (List.hd (!lref))) else (-1);
+      deux := if (!lref) <> [] then (fst (List.hd (!lref))) else (-1.);
     done;
     lref := minsert (!lmax) (!lref);
     insert (n.w,n) (!lref)
   
 
-exception OverloadedNode of (node*int)
+exception OverloadedNode of (node*load)
 
 
 let rec tarbre_to_arbre_int t serv_table= (* transforms a tarbre in tarbre_int *)
@@ -410,9 +410,9 @@ and ap_ta_to_t l serv_table=
 let energy_int arbre_int serv_table=
   let rec aux_energy_int energy tree =
     match tree with
-      |ServerInt([],_,{s = i; load = _}) ->  energy + serv_table.(i)*serv_table.(i)*serv_table.(i)
-      |ServerInt(a,_,{s = i; load = _}) -> (List.fold_left aux_energy_int (energy + serv_table.(i)*serv_table.(i)*serv_table.(i)) a)
-  in aux_energy_int 0 arbre_int
+      |ServerInt([],_,{s = i; load = _}) ->  energy +. serv_table.(i)*.serv_table.(i)*.serv_table.(i)
+      |ServerInt(a,_,{s = i; load = _}) -> (List.fold_left aux_energy_int (energy +. serv_table.(i)*.serv_table.(i)*.serv_table.(i)) a)
+  in aux_energy_int 0. arbre_int
 
 let rec insert_new_sort subtree_int list_of_tree_int = (*For the discrete case, the first sort for the sons of a Server following:  (i>i' || (i=i' && l<l')) *)
    match list_of_tree_int with 
@@ -441,27 +441,27 @@ let rec slight_optim_discret id rev_usl_list_sons list_of_sons  serv_table remai
           let new_rev_usl = ServerInt(b,m,{s = 0; load = l'}) :: rev_usl_list_sons in
           slight_optim_discret id new_rev_usl q  serv_table remaining_space i
   | ServerInt(b,m,{s = i'; load = l'}) :: q -> 
-      if (l' - serv_table.(i'-1)) <= remaining_space then (*First can we do something without impacting the overall energy (no mode change)*)
+      if (l' -. serv_table.(i'-1)) <= remaining_space then (*First can we do something without impacting the overall energy (no mode change)*)
         begin
           let temp = new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q in
           let sorted_sons = List.rev_append rev_usl_list_sons temp in
-          (sorted_sons, true, (remaining_space - (l' - serv_table.(i'-1))), i)
+          (sorted_sons, true, (remaining_space -. (l' -. serv_table.(i'-1))), i)
         end
       else 
       if i+1 = (Array.length serv_table)  then (*If we cannot increase the speed of the father then do nothing for this son*)
         let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
         slight_optim_discret id new_rev_usl q  serv_table remaining_space i
       else 
-        let new_energy = serv_table.(i+1)*serv_table.(i+1)*serv_table.(i+1) + serv_table.(i'-1)*serv_table.(i'-1)*serv_table.(i'-1) in
-        let old_energy = serv_table.(i)*serv_table.(i)*serv_table.(i) + serv_table.(i')*serv_table.(i')*serv_table.(i') in
+        let new_energy = serv_table.(i+1)*. serv_table.(i+1)*. serv_table.(i+1) +. serv_table.(i'-1)*. serv_table.(i'-1)*. serv_table.(i'-1) in
+        let old_energy = serv_table.(i)*. serv_table.(i)*. serv_table.(i) +. serv_table.(i')*. serv_table.(i')*. serv_table.(i') in
         if (new_energy > old_energy ) then (*Is it worth it to increase the speed of the father to decrease the speed of the son*)
           let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
           slight_optim_discret id new_rev_usl q  serv_table remaining_space i
         else
-          if (l' - serv_table.(i'-1)) <= (remaining_space +serv_table.(i+1) - serv_table.(i)) then (* If there is enough room when we add one mode*)
+          if (l' -. serv_table.(i'-1)) <= (remaining_space +.serv_table.(i+1) -. serv_table.(i)) then (* If there is enough room when we add one mode*)
             let temp = new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q in
             let sorted_sons = List.rev_append rev_usl_list_sons temp in
-            (sorted_sons, true, (remaining_space+serv_table.(i+1) - serv_table.(i) - (l' - serv_table.(i'-1)) ), i+1)
+            (sorted_sons, true, (remaining_space+. serv_table.(i+1) -. serv_table.(i) -. (l' -. serv_table.(i'-1)) ), i+1)
           else
             let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
             slight_optim_discret id new_rev_usl q  serv_table remaining_space i
@@ -481,21 +481,21 @@ let rec optim_discret id t serv_table =
       let cont =ref true in
       let cont_slight = ref true in
       let iref = ref (max i' i) in
-      let remaining_space = ref (serv_table.(!iref) - l) in
+      let remaining_space = ref (serv_table.(!iref) -. l) in
       while !cont_slight do
-      while ( !remaining_space >0 && !cont) do
+      while ( !remaining_space > 0. && !cont) do
         match !sorted_sons with
           | ServerInt(b,m,{s = i'; load = l'}) ::q ->
             begin
               if i'=0 then cont := false 
               else
                 begin
-                  if (l' - serv_table.(i'-1)) <= !remaining_space then
+                  if (l' -. serv_table.(i'-1)) <= !remaining_space then
                     (sorted_sons := new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q;
-                    remaining_space := !remaining_space - (l' - serv_table.(i'-1)))
+                    remaining_space := !remaining_space -. (l' -. serv_table.(i'-1)))
                   else
-                    (sorted_sons := new_sort id [ServerInt(b,m,{s = i'; load = (l'-(!remaining_space))})] q;
-                    remaining_space :=0)
+                    (sorted_sons := new_sort id [ServerInt(b,m,{s = i'; load = (l'-.(!remaining_space))})] q;
+                    remaining_space :=0.)
               end
             end
           | _ -> failwith "list should not be empty"
@@ -508,7 +508,7 @@ let rec optim_discret id t serv_table =
       cont:=!cont_slight
       done;
       let new_sons = List.map (function x -> optim_discret id x serv_table) !sorted_sons in
-      ServerInt(new_sons, n, {s=(!iref); load = serv_table.(!iref)-(!remaining_space)})
+      ServerInt(new_sons, n, {s=(!iref); load = serv_table.(!iref)-.(!remaining_space)})
     end
 
 
