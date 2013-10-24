@@ -15,7 +15,7 @@ let () = Random.self_init ()
 let reg_tab_speeds n  max_speed= 
   let sol = Array.make n 0. in
   for i=1 to n-1 do
-    sol.(i) <- (float_of_int i)*. (max_speed /. (float_of_int (n-1)))
+    sol.(i) <- (float_of_int i)*. ((float_of_int max_speed) /. (float_of_int (n-1)))
   done;
   sol
 
@@ -23,7 +23,7 @@ let reg_tab_speeds n  max_speed=
 let irreg_tab_speeds n  max_speed= 
   let sol = Array.make n 0. in
   for i=1 to n-1 do
-    sol.(i) <- Random.float max_speed
+    sol.(i) <- ((float_of_int (Random.int (max_speed*100)))/.100.)
   done;
   Array.fast_sort compare sol;
   sol
@@ -31,11 +31,11 @@ let irreg_tab_speeds n  max_speed=
 
 let parse_config file =
   let chan = open_in file in
-  let rmax = float_of_string (input_line chan) in
+  let rmax = int_of_string (input_line chan) in
   let tree_type = int_of_string (input_line chan) in 
   let size_of_tree = int_of_string (input_line chan) in
   let number_of_speeds = int_of_string (input_line chan) in
-  let max_speed = float_of_string (input_line chan) in
+  let max_speed = int_of_string (input_line chan) in
   let regularity_speed = int_of_string (input_line chan) in
   let number_of_tests = int_of_string (input_line chan) in
   let () = close_in chan in

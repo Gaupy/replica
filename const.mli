@@ -1,9 +1,9 @@
 type parameter = {
-  rmax : float;
+  rmax : int;
   tree_type : int;
   size_of_tree : int;
   number_of_speeds : int;
-  max_speed : float;
+  max_speed : int;
   regularity_speed : int;
   number_of_tests : int
  }

@@ -242,6 +242,7 @@ int main(int argc, char *argv[])
 	double result_caml;
 	int x;
 	double y;
+	float verif;
 	if(argc != 4) {
        printf("Usage: %s number-of-rings\n",argv[0]);
        return 1;}
@@ -266,6 +267,7 @@ int main(int argc, char *argv[])
 		fscanf(fp,"%lf",&y); 
 		serverSpeeds[k] = y;
 	}   
+	verif = 0;
 	for (i = 1; i <= T;i++)
 	{
 		for(j = 1; j <= T;j++)
@@ -273,6 +275,10 @@ int main(int argc, char *argv[])
 			fscanf(fp,"%lf",&y); 
 			precMatrix[i][j] = y;
 		}   
+	}
+	for (i = 1; i <= T;i++)
+	{
+	verif += precMatrix[i][i];
 	}
 
 	init();
@@ -288,12 +294,23 @@ int main(int argc, char *argv[])
 			precMatrix[i][j] = y;
 		}   
 	}
+	for (i = 1; i <= T;i++)
+	{
+	verif -= precMatrix[i][i];
+	}
 
-
-	init();
-	solve();
-/*	show();*/
-	clean();
+	if (-0.0001 <= verif && verif <= 0.0001)
+	{
+		init();
+		solve();
+/*		show();*/
+		clean();
+	}
+	else
+	{
+		printf("\t-1");
+	}
+	printf("\t%f", verif);
 	printf("\n");
 	fclose(fp);
 	return 0;
