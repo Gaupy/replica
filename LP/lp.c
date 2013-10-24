@@ -299,17 +299,10 @@ int main(int argc, char *argv[])
 	verif -= precMatrix[i][i];
 	}
 
-	if (-0.0001 <= verif && verif <= 0.0001)
-	{
-		init();
-		solve();
-/*		show();*/
-		clean();
-	}
-	else
-	{
-		printf("\t-1");
-	}
+	init();
+	solve();
+/*	show();*/
+	clean();
 	printf("\t%f", verif);
 	printf("\n");
 	fclose(fp);
