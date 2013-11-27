@@ -25,7 +25,7 @@ let irreg_tab_speeds n  max_speed=
   for i=1 to n-1 do
     sol.(i) <- ((float_of_int (Random.int (max_speed*100)))/.100.)
   done;
-  Array.fast_sort compare sol;
+  Array.sort compare sol;
   sol
 
 
@@ -62,7 +62,7 @@ let script config_file =
       | _ -> cree_alea (param.size_of_tree) (param.rmax)
     in 
       let first_matrix = make_prec_matrix_full_tree tree (param.size_of_tree) in
-      for j = 1 to (param.size_of_tree) do
+      for j = (param.size_of_tree) to (param.size_of_tree) do
         try 
         let result_discret_intel, matrix = algo_discret 0 tree (param.size_of_tree) j tab_of_speeds in
         let st = sprintf "results/size=%d_serv=%d_iter=%d.dat" (param.size_of_tree) j i in 
@@ -70,7 +70,7 @@ let script config_file =
           fprintf oo "%f \n %d \t %d \t %d \n" result_discret_intel param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
           print_set_of_speeds tab_of_speeds oo;
           print_square_matrix first_matrix oo;
-          print_square_matrix matrix oo;
+          print_square_matrix_int matrix first_matrix oo;
           close_out oo
         with
           | OverloadedNode(_,_) -> ()
