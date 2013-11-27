@@ -36,11 +36,11 @@ let print_square_matrix_int matrix1 matrix2 oo =
   for i = 0 to n-1 do
     if matrix1.(i).(i) = 0. then
       let j = ref (i-1) in
-      while matrix1.(i).(!j) = 0. do
+      while (!j >= 0 && matrix1.(!j).(i) = 0.) do
        decr j
       done;
-      if matrix1.(i).(!j) = 0. then failwith "bug ici, remplacer i par j";
-        result.(!j).(!j) <- result.(!j).(!j) +. matrix2.(i).(i)
+(*      if !j<0 then failwith "bug ici, remplacer i par j";*)
+(*        result.(!j).(!j) <- result.(!j).(!j) +. matrix2.(i).(i)*)
     else     
     result.(i).(i) <- matrix2.(i).(i)
   done;
