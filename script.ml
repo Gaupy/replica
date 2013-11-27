@@ -62,7 +62,7 @@ let script config_file =
       | _ -> cree_alea (param.size_of_tree) (param.rmax)
     in 
       let first_matrix = make_prec_matrix_full_tree tree (param.size_of_tree) in
-      for j = (param.size_of_tree) to (param.size_of_tree) do
+      for j = 1 to (param.size_of_tree) do
         try 
         let result_discret_intel, matrix = algo_discret 0 tree (param.size_of_tree) j tab_of_speeds in
         let st = sprintf "results/size=%d_serv=%d_iter=%d.dat" (param.size_of_tree) j i in 
