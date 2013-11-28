@@ -6,13 +6,14 @@ make opt
 cd results
 gcc ../LP/lp.c -o test -lglpk -fno-stack-protector 
 for r in `seq 1 $7`; do
+#	ssh slsu0-01.dsi-ext.ens-lyon.fr
 	for s in `seq 1 $3`; do
-		./test $3 $s $r >> result_$3_$s_$r.temp &
-	done
+		./test $3 $s $r >> result_$3_${r}_${s}.temp;
+	done &
 done
 for r in `seq 1 $7`; do
 	for s in `seq 1 $3`; do
-		cat result_$3_$s_$r.temp >> result_$3_$4_$6.score;
+		cat result_$3_${r}_${s}.temp >> result_$3_$4_$6.score;
 	done
 done
 rm ../conf *.temp
