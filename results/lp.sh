@@ -11,6 +11,7 @@ for r in `seq 1 $7`; do
 		./test $3 $s $r >> result_$3_${r}_${s}.temp;
 	done &
 done
+wait
 for r in `seq 1 $7`; do
 	for s in `seq 1 $3`; do
 		cat result_$3_${r}_${s}.temp >> result_$3_$4_$6.score;
