@@ -2,12 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <glpk.h>
+#include <assert.h>
 
-#define LENGTH 100000 /* number of non-zero values in the LP formulation */
+#define LENGTH 200000 /* number of non-zero values in the LP formulation */
 #define MAX_TASK 100
 #define MAX_SERVERS 100
 #define MAX_SPEEDS 100
-#define NAME_LENGTH 20 /* name each variable and constraint */
+#define NAME_LENGTH 200 /* name each variable and constraint */
 
 /* I know global variables are harmful, but let's just use them. */
 float precMatrix[MAX_TASK][MAX_TASK];
@@ -54,7 +55,8 @@ void init()
 			col = (j-1)*K + k;
 			glp_set_col_kind(lp, col, GLP_BV); /* x_{j,k} \in \{0,1\} */
 			glp_set_obj_coef(lp, col, serverSpeeds[k]*serverSpeeds[k]*serverSpeeds[k]);
-			sprintf(name, "x_%02d_%02d", j, k);
+			snprintf(name,NAME_LENGTH, "x_%02d_%02d", j, k);
+			//fprintf(stderr,"x_%02d_%02d", j, k);
 			glp_set_col_name(lp, col, name);
 		}
 	}
@@ -187,9 +189,13 @@ void init()
 			ar[nnz] = 1;
 		}
 	}
+
+			assert(nnz<LENGTH);
+
 	/* load the matrix */
 	glp_load_matrix(lp, nnz, ia, ja, ar);
 }
+
 
 void solve()
 {
@@ -201,7 +207,8 @@ void solve()
 
 	glp_iocp param;
 	glp_init_iocp(&param);
-	
+
+
 /*	param.presolve = GLP_ON;*/
 /*	param.msg_lev = GLP_MSG_ERR;*/
 	param.msg_lev = GLP_MSG_OFF;
@@ -235,11 +242,11 @@ void clean()
 
 int main(int argc, char *argv[])
 {
-	int row, col; /* dummy variables for indexing row and column */
 	char name[NAME_LENGTH];
+	int row, col; /* dummy variables for indexing row and column */
 	char *pch;
 	FILE *fp;
-	int k,i,j,t,s;
+	int k,i,j,t,s,l;
 	double result_caml;
 	int x;
 	double y;
@@ -250,13 +257,15 @@ int main(int argc, char *argv[])
 	t = atoi(argv[1]);
 	s = atoi(argv[2]);
 	i = atoi(argv[3]);
+	l = i;
         sprintf(name, "size=%d_serv=%d_iter=%d.dat", t, s, i);
 	if ((fp = fopen(name, "r")) == NULL ) {
-/*		printf("No results for size=%d_serv=%d_iter=%d \n", t, s, i);*/
+/*		printf("No results for size=%d_serv=%d_iter=%d \n", t, s, iter);*/
 		exit(EXIT_FAILURE);
 	}
 
-	fp = fopen(name,"r");
+	//fp = fopen(name,"r");
+	assert(fp);
 	printf("%d \t %d \t %d \t", t, s,i);
 	fscanf(fp,"%lf",&result_caml);
 	printf("%lf", result_caml);
@@ -268,6 +277,7 @@ int main(int argc, char *argv[])
 		fscanf(fp,"%lf",&y); 
 		serverSpeeds[k] = y;
 	}   
+
 	verif = 0;
 	for (i = 1; i <= T;i++)
 	{
@@ -277,16 +287,26 @@ int main(int argc, char *argv[])
 			precMatrix[i][j] = y;
 		}   
 	}
+
 	for (i = 1; i <= T;i++)
 	{
 	verif += precMatrix[i][i];
 	}
 
+
 	init();
+	
+/*        sprintf(name, "pbm_size=%d_serv=%d_iter=%d.lp", t, s, l);*/
+/*	int ret = glp_write_lp(lp, NULL, name);*/
+
+
 	solve();
 /*	show();*/
+
+
 	clean();
 
+	
 	for (i = 1; i <= T;i++)
 	{
 		for(j = 1; j <= T;j++)
