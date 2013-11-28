@@ -221,7 +221,8 @@ void solve()
 	}
 	else
 	{
-	 	printf("No feasible Solution: %d\n", glp_mip_status(lp));
+	 	printf("\t-1");
+/*	 	printf("No feasible Solution: %d\n", glp_mip_status(lp));*/
 	}
 }
 
