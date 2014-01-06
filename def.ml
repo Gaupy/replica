@@ -1,5 +1,5 @@
 type load = float (*The load of the server*)
-type node = { n : int ; mutable w : load }
+type node = { mutable w : load }
 type input = float
 type index_spe = int (*The index of the speed on the speed_table*)
 

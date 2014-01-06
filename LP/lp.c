@@ -245,7 +245,7 @@ int main(int argc, char *argv[])
 	char name[NAME_LENGTH];
 	int row, col; /* dummy variables for indexing row and column */
 	char *pch;
-	FILE *fp;
+	FILE *fp,*fp2;
 	int k,i,j,t,s,l;
 	double result_caml;
 	int x;
@@ -256,19 +256,24 @@ int main(int argc, char *argv[])
        return 1;}
 	t = atoi(argv[1]);
 	s = atoi(argv[2]);
-	i = atoi(argv[3]);
-	l = i;
-        sprintf(name, "size=%d_serv=%d_iter=%d.dat", t, s, i);
+	l = atoi(argv[3]);
+        sprintf(name, "size=%d_serv=%d_iter=%d.dat", t, s, l);
 	if ((fp = fopen(name, "r")) == NULL ) {
 /*		printf("No results for size=%d_serv=%d_iter=%d \n", t, s, iter);*/
 		exit(EXIT_FAILURE);
 	}
 
-	//fp = fopen(name,"r");
 	assert(fp);
-	printf("%d \t %d \t %d \t", t, s,i);
+/*        sprintf(name, "result_%d_%d_%d.temp", t, s, l);*/
+/*	fp2 = fopen(name,"w");*/
+/*if (fp2 == NULL) {*/
+/*  fprintf(stderr, "Can't open output file %s!\n", name);*/
+/*  exit(1);*/
+/*}*/
+/*	*/
+/*	fprintf(fp2,"%d \t %d \t %d \t", t, s,l);*/
 	fscanf(fp,"%lf",&result_caml);
-	printf("%lf", result_caml);
+/*	fprintf(fp2,"%lf \t", result_caml);*/
 	fscanf(fp,"%d",&K);
 	fscanf(fp,"%d",&T);
 	fscanf(fp,"%d",&S);
@@ -294,15 +299,15 @@ int main(int argc, char *argv[])
 	}
 
 
+
 	init();
 	
-/*        sprintf(name, "pbm_size=%d_serv=%d_iter=%d.lp", t, s, l);*/
-/*	int ret = glp_write_lp(lp, NULL, name);*/
+	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_general.lp", t, s, l);
+	int ret = glp_write_lp(lp, NULL, name);
 
 
-	solve();
+/*	solve();*/
 /*	show();*/
-
 
 	clean();
 
@@ -320,12 +325,27 @@ int main(int argc, char *argv[])
 	verif -= precMatrix[i][i];
 	}
 
+        sprintf(name, "result_%d_%d_%d.temp", t, s, l);
+	fp2 = fopen(name,"w");
+	if (fp2 == NULL) {
+	  fprintf(stderr, "Can't open output file %s!\n", name);
+	  exit(1);
+	}
+	
+	fprintf(fp2,"%d \t %d \t %d \t", t, s,l);
+	fprintf(fp2,"%f \t", verif);
+	fprintf(fp2,"%lf \t", result_caml);
+
+
 	init();
-	solve();
+	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_located.lp", t, s, l);
+	ret = glp_write_lp(lp, NULL, name);
+
+/*	solve();*/
 /*	show();*/
 	clean();
-	printf("\t%f", verif);
-	printf("\n");
+/*	printf("\n");*/
+	fclose(fp2);
 	fclose(fp);
 	return 0;
 }

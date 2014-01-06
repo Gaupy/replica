@@ -113,7 +113,7 @@ and ap_ta_to_t l =
 let rec cree_tarbre tarbre l adress= match tarbre with (* Allocates servers to the list of addresses l*)
   |Node(fl,ent) -> 
     if appart adress l then
-      Server(ap_cree_tarbre fl l adress 0,{n = 0 ; w = 0.},ent)
+      Server(ap_cree_tarbre fl l adress 0,{w = 0.},ent)
     else
       Node(fl,ent)
       |Server(_,_,_) -> failwith "server at wrong place"
@@ -165,7 +165,7 @@ let recalc_potentiel t = (*Returns the list of address of potential new spots to
 let rec copy_tree tr = (* makes a copy of tr (type server tree)*)
   match tr with 
     |Node(a,b) -> Node(apply_copy_tree a,b)
-    |Server(a,no,b) -> Server(apply_copy_tree a,{n = no.n ; w = no.w},b)
+    |Server(a,no,b) -> Server(apply_copy_tree a,{w = no.w},b)
 and apply_copy_tree l = 
   match l with
     |p::q -> (copy_tree p) :: (apply_copy_tree q)
@@ -202,7 +202,7 @@ let rec ajout_server t ad adinit = (* rajoute un serveur dans t à l'adresse ad 
 	  print_l ad;
 	  failwith "server already placed"
          |Node(fl,ent) -> 
-	  (Server(fl,{ n=0; w=0.},ent),adresse_fils adinit (List.length fl))
+	  (Server(fl,{ w=0.},ent),adresse_fils adinit (List.length fl))
       end
 
 let lpop l = 
@@ -386,7 +386,7 @@ let rec opt_int tr = match tr with (* fonction qui calcule la répartition optim
 exception OverloadedNode of (node*load)
 
 
-let rec tarbre_to_arbre_int t serv_table= (* transforms a tarbre in tarbre_int *)
+let rec tarbre_to_arbre_int t serv_table= (* transforms a full_tree in server_tree_int  *)
   match t with 
     |Node(fl,ent) -> failwith "node reached 1"
     |Server(fl,n,ent) -> 

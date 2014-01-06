@@ -70,7 +70,8 @@ let script config_file =
           fprintf oo "%f \n %d \t %d \t %d \n" result_discret_intel param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
           print_set_of_speeds tab_of_speeds oo;
           print_square_matrix first_matrix oo;
-          print_square_matrix_int matrix first_matrix oo;
+(*          print_square_matrix_int matrix first_matrix oo;*)
+          print_square_matrix matrix oo;
           close_out oo
         with
           | OverloadedNode(_,_) -> ()
