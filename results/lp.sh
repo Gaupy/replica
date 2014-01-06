@@ -22,4 +22,4 @@ for r in `seq 1 $7`; do
 #		echo "\n" >> result_$3_$4_$6.score
 	done
 done
-rm ../conf *.temp *.lp *.dat
+rm ../conf *.temp pbm_size=$3_* size=$3_*
