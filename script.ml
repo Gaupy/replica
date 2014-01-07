@@ -64,14 +64,18 @@ let script config_file =
       let first_matrix = make_prec_matrix_full_tree tree (param.size_of_tree) in
       for j = 1 to (param.size_of_tree) do
         try 
-        let result_discret_intel, matrix = algo_discret 0 tree (param.size_of_tree) j tab_of_speeds in
+        let result_discret_greedy, matrix_greedy = algo_discret 0 tree (param.size_of_tree) j tab_of_speeds in
+        let result_discret_move_1, matrix_move_1 = algo_discret 1 tree (param.size_of_tree) j tab_of_speeds in
+        let result_discret_move_2, matrix_move_2 = algo_discret 2 tree (param.size_of_tree) j tab_of_speeds in
         let st = sprintf "results/size=%d_serv=%d_iter=%d.dat" (param.size_of_tree) j i in 
         let oo = open_out st in
-          fprintf oo "%f \n %d \t %d \t %d \n" result_discret_intel param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
+          fprintf oo "%f \n %f \n %f \n %d \t %d \t %d \n" result_discret_greedy result_discret_move_1 result_discret_move_2 param.number_of_speeds param.size_of_tree j; (*result \n K T S \n*)
           print_set_of_speeds tab_of_speeds oo;
           print_square_matrix first_matrix oo;
 (*          print_square_matrix_int matrix first_matrix oo;*)
-          print_square_matrix matrix oo;
+          print_square_matrix matrix_greedy oo;
+          print_square_matrix matrix_move_1 oo;
+          print_square_matrix matrix_move_2 oo;
           close_out oo
         with
           | OverloadedNode(_,_) -> ()

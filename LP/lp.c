@@ -3,6 +3,7 @@
 #include <string.h>
 #include <glpk.h>
 #include <assert.h>
+#include <math.h>
 
 #define LENGTH 200000 /* number of non-zero values in the LP formulation */
 #define MAX_TASK 100
@@ -247,7 +248,7 @@ int main(int argc, char *argv[])
 	char *pch;
 	FILE *fp,*fp2;
 	int k,i,j,t,s,l;
-	double result_caml;
+	double result_greedy, result_move1, result_move2;
 	int x;
 	double y;
 	float verif;
@@ -264,16 +265,9 @@ int main(int argc, char *argv[])
 	}
 
 	assert(fp);
-/*        sprintf(name, "result_%d_%d_%d.temp", t, s, l);*/
-/*	fp2 = fopen(name,"w");*/
-/*if (fp2 == NULL) {*/
-/*  fprintf(stderr, "Can't open output file %s!\n", name);*/
-/*  exit(1);*/
-/*}*/
-/*	*/
-/*	fprintf(fp2,"%d \t %d \t %d \t", t, s,l);*/
-	fscanf(fp,"%lf",&result_caml);
-/*	fprintf(fp2,"%lf \t", result_caml);*/
+	fscanf(fp,"%lf",&result_greedy);
+	fscanf(fp,"%lf",&result_move1);
+	fscanf(fp,"%lf",&result_move2);
 	fscanf(fp,"%d",&K);
 	fscanf(fp,"%d",&T);
 	fscanf(fp,"%d",&S);
@@ -297,21 +291,18 @@ int main(int argc, char *argv[])
 	{
 	verif += precMatrix[i][i];
 	}
-
-
-
 	init();
-	
+/* If you have access to cplex, use this to solve the problem*/
 	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_general.lp", t, s, l);
 	int ret = glp_write_lp(lp, NULL, name);
 
-
+/* This was used to solve with glpk instead of cplex if you do not have an access to cplex*/
 /*	solve();*/
 /*	show();*/
-
 	clean();
 
 	
+/*We now create the solution for the greedy allocation */
 	for (i = 1; i <= T;i++)
 	{
 		for(j = 1; j <= T;j++)
@@ -320,31 +311,87 @@ int main(int argc, char *argv[])
 			precMatrix[i][j] = y;
 		}   
 	}
+	float verif_greedy = verif;
 	for (i = 1; i <= T;i++)
 	{
-	verif -= precMatrix[i][i];
+	verif_greedy -= precMatrix[i][i];
 	}
 
+	init();
+/* If you have access to cplex, use this to solve the problem*/
+	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_greedy_located.lp", t, s, l);
+	ret = glp_write_lp(lp, NULL, name);
+/* This was used to solve with glpk instead of cplex if you do not have an access to cplex*/
+/*	solve();*/
+/*	show();*/
+	clean();
+
+/*We now create the solution for the move_1 allocation */
+	for (i = 1; i <= T;i++)
+	{
+		for(j = 1; j <= T;j++)
+		{
+			fscanf(fp,"%lf",&y); 
+			precMatrix[i][j] = y;
+		}   
+	}
+	float verif_move1 = verif;
+	for (i = 1; i <= T;i++)
+	{
+	verif_move1 -= precMatrix[i][i];
+	}
+
+	init();
+/* If you have access to cplex, use this to solve the problem*/
+	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_move1_located.lp", t, s, l);
+	ret = glp_write_lp(lp, NULL, name);
+/* This was used to solve with glpk instead of cplex if you do not have an access to cplex*/
+/*	solve();*/
+/*	show();*/
+	clean();
+
+/*We now create the solution for the greedy allocation */
+	for (i = 1; i <= T;i++)
+	{
+		for(j = 1; j <= T;j++)
+		{
+			fscanf(fp,"%lf",&y); 
+			precMatrix[i][j] = y;
+		}   
+	}
+	int verif_move2 = verif;
+	for (i = 1; i <= T;i++)
+	{
+	verif_move2 -= precMatrix[i][i];
+	}
+
+	init();
+/* If you have access to cplex, use this to solve the problem*/
+	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_move2_located.lp", t, s, l);
+	ret = glp_write_lp(lp, NULL, name);
+/* This was used to solve with glpk instead of cplex if you do not have an access to cplex*/
+/*	solve();*/
+/*	show();*/
+	clean();
+/*This file is where we write the results obtained with the caml procedure and the verifications.*/
         sprintf(name, "result_%d_%d_%d.temp", t, s, l);
 	fp2 = fopen(name,"w");
 	if (fp2 == NULL) {
 	  fprintf(stderr, "Can't open output file %s!\n", name);
 	  exit(1);
 	}
-	
+
 	fprintf(fp2,"%d \t %d \t %d \t", t, s,l);
-	fprintf(fp2,"%f \t", verif);
-	fprintf(fp2,"%lf \t", result_caml);
+/*	float temp = fmax(fabs(verif_greedy),fabs(verif_move1));*/
+/*	temp = fmax(temp,fabs(verif_move2));*/
+	fprintf(fp2,"%f \t", verif_greedy);
+	fprintf(fp2,"%f \t", verif_move1);
+	fprintf(fp2,"%f \t", verif_move2);
+	fprintf(fp2,"%lf \t", result_greedy);
+	fprintf(fp2,"%lf \t", result_move1);
+	fprintf(fp2,"%lf \t", result_move2);
 
 
-	init();
-	sprintf(name, "pbm_size=%d_serv=%d_iter=%d_located.lp", t, s, l);
-	ret = glp_write_lp(lp, NULL, name);
-
-/*	solve();*/
-/*	show();*/
-	clean();
-/*	printf("\n");*/
 	fclose(fp2);
 	fclose(fp);
 	return 0;
