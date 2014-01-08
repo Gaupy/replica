@@ -170,7 +170,7 @@ let algo_gopi t n = (*Starting from an optimal solution with n servers, computes
   done
   end;
   let _ = opt (tarbre_to_arbre (!repargmin)) in  
-  puisst (!repargmin),!repargmin,!compt_decr
+  puisst (!repargmin),!repargmin(*,!compt_decr*)
   
 (* \H1 *)
 

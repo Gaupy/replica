@@ -14,6 +14,8 @@ for r in `seq 1 $7`; do
 			cplex -c "r pbm_size=$3_serv=${s}_iter=${r}_greedy_located.lp" "opt"|grep "Objective ="| cut -d " " -f 10 >> result_$3_${s}_${r}.temp
 			cplex -c "r pbm_size=$3_serv=${s}_iter=${r}_move1_located.lp" "opt"|grep "Objective ="| cut -d " " -f 10 >> result_$3_${s}_${r}.temp
 			cplex -c "r pbm_size=$3_serv=${s}_iter=${r}_move2_located.lp" "opt"|grep "Objective ="| cut -d " " -f 10 >> result_$3_${s}_${r}.temp
+		else 
+			echo "\n" >> result_$3_${s}_${r}.temp
 		fi
 	done
 done
@@ -24,4 +26,4 @@ for r in `seq 1 $7`; do
 #		echo "\n" >> result_$3_$4_$6.score
 	done
 done
-#rm ../conf *.log *.temp pbm_size=$3_* size=$3_*
+rm ../conf *.log *.temp pbm_size=$3_* size=$3_*
