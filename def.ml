@@ -18,3 +18,5 @@ type serv_prop = {mutable s : index_spe ; mutable load : load} (*load \leq tab_o
 
 type server_tree_int = (*tarbre list represents the list of sons of the ServerNode,  node reprents the identity (node.n) of the node, and its load (node.w), serv_prop is the property of the server.*)
   | ServerInt of ((server_tree_int list) * node * serv_prop)
+
+type energy = {static : float ; speeds : float array}

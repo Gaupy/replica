@@ -3,9 +3,11 @@ type parameter = {
   tree_type : int;
   size_of_tree : int;
   number_of_speeds : int;
+  static : float;
   max_speed : int;
   regularity_speed : int;
-  number_of_tests : int
+  number_of_tests : int;
+  expe_number : int
  }
 
 val default : parameter

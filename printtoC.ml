@@ -46,10 +46,11 @@ let print_square_matrix_int matrix1 matrix2 oo =
   done;
     print_square_matrix result oo
 
-let print_set_of_speeds speeds_array oo= 
-  let n = Array.length speeds_array in
+let print_set_of_speeds energy oo= 
+  fprintf oo "%f\t" energy.static;
+  let n = Array.length energy.speeds in
   for i= 0 to n-1 do
-    fprintf oo "%f \t" speeds_array.(i)
+    fprintf oo "%f\t" energy.speeds.(i)
   done;
   fprintf oo "\n"
 
