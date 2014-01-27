@@ -22,8 +22,10 @@ case $9 in
 			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
 			if [ "${nodes}" -lt 25 ]; then
 				cplex -c "r pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d " " -f 10 >> result_${nodes}_${5}_${9}_${iter}.temp
-				rm pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp
+			else
+				echo "\n" >> result_${nodes}_${5}_${9}_${iter}.temp
 			fi
+			rm pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp
 		done
 	done
 	for nodes in `seq 1 $3`; do
