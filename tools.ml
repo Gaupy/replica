@@ -383,105 +383,173 @@ let rec opt_int tr = match tr with (* fonction qui calcule la répartition optim
     insert (n.w,n) (!lref)
   
 
+(*Creation of a regular table of speeds*)
+let reg_tab_speeds n  max_speed= 
+  let sol = Array.make n 0. in
+  for i=1 to n-1 do
+    sol.(i) <- (float_of_int i)*. ((float_of_int max_speed) /. (float_of_int (n-1)))
+  done;
+  sol
+
+(*Creation of an intel table of speeds*)
+let intel_tab_speeds n max_speed= 
+  let sol = Array.make 6 0. in
+  sol.(1) <- 0.15 *. (float_of_int max_speed);
+  sol.(2) <- 0.4 *. (float_of_int max_speed);
+  sol.(3) <- 0.6 *. (float_of_int max_speed);
+  sol.(4) <- 0.8 *. (float_of_int max_speed);
+  sol.(5) <- (float_of_int max_speed);
+  sol
+
+(*Creation of an irregular table of speeds. There can be equal speeds.*)
+let irreg_tab_speeds n  max_speed= 
+  let sol = Array.make n 0. in
+  for i=1 to n-1 do
+    sol.(i) <- ((float_of_int (Random.int (max_speed*100)))/.100.)
+  done;
+  Array.sort compare sol;
+  sol
+
+let diff_prec mat1 mat2 =
+  let n1 = Array.length mat1 in
+  let n2 = Array.length mat2 in
+  let prec = ref 0. in
+    for i=0 to n1 - 1 do
+      prec := !prec +. mat1.(i).(i)
+    done;
+    for i=0 to n2 - 1 do
+      prec := !prec -. mat2.(i).(i)
+    done;
+  max (!prec) (-. !prec)
+
 exception OverloadedNode of (node*load)
 
 
-let rec tarbre_to_arbre_int t serv_table= (* transforms a full_tree in server_tree_int  *)
+let rec tarbre_to_arbre_int t energy= (* transforms a full_tree in server_tree_int  *)
   match t with 
     |Node(fl,ent) -> failwith "node reached 1"
     |Server(fl,n,ent) -> 
-      let a = ap_ta_to_t fl serv_table in
+      let a = ap_ta_to_t fl energy in
       let i = ref 0 in
-      let size = Array.length serv_table in
-      while serv_table.(!i) < n.w do incr i; if !i=size then raise (OverloadedNode (n,n.w)) done;
+      let size = Array.length energy.speeds in
+      while energy.speeds.(!i) < n.w do incr i; if !i=size then raise (OverloadedNode (n,n.w)) done;
       ServerInt(a,n,{s = !i; load = n.w})
-and ap_ta_to_t l serv_table= 
+and ap_ta_to_t l energy= 
   match l with
     |[] -> []
     |p::q ->
       begin
-        let a = ap_ta_to_t q serv_table in
+        let a = ap_ta_to_t q energy in
         match p with
           |Node(fl,ent) -> a
-          |Server(fl,_,ent) -> (tarbre_to_arbre_int p serv_table)::a
+          |Server(fl,_,ent) -> (tarbre_to_arbre_int p energy)::a
       end
 
 
-let energy_int arbre_int serv_table=
-  let rec aux_energy_int energy tree =
+let energy_int_val i energy =
+  if i = 0 then 0. else energy.speeds.(i)*.energy.speeds.(i)*.energy.speeds.(i) +. energy.static
+
+let energy_int_node node energy =
+  match node with
+    |ServerInt(_,_,{s = i; load = _}) -> energy_int_val i energy
+
+
+
+
+let energy_int arbre_int energy=
+  let rec aux_energy_int temp_energy tree =
     match tree with
-      |ServerInt([],_,{s = i; load = _}) ->  energy +. serv_table.(i)*.serv_table.(i)*.serv_table.(i)
-      |ServerInt(a,_,{s = i; load = _}) -> (List.fold_left aux_energy_int (energy +. serv_table.(i)*.serv_table.(i)*.serv_table.(i)) a)
+      |ServerInt([],_,{s = i; load = _}) -> temp_energy +. energy_int_node tree energy
+      |ServerInt(a,_,{s = i; load = _}) -> (List.fold_left aux_energy_int (temp_energy +. energy_int_node tree energy) a)
   in aux_energy_int 0. arbre_int
 
-let rec insert_new_sort subtree_int list_of_tree_int = (*For the discrete case, the first sort for the sons of a Server following:  (i>i' || (i=i' && l<l')) *)
+let rec insert_new_sort energy subtree_int list_of_tree_int = (*For the discrete case, the first sort for the sons of a Server following:  (i>i' || (i=i' && l<l')) *)
    match list_of_tree_int with 
      | [] -> [subtree_int]
      | ServerInt(a,b,{s=i;load = l})::q ->
        match subtree_int with
          |ServerInt(_,_,{s=i';load=l'}) -> 
-           if (i>i' || (i=i' && l<l')) then ServerInt(a,b,{s=i;load = l})::(insert_new_sort subtree_int q)
+           if (i>i' || (i=i' && l<l')) then ServerInt(a,b,{s=i;load = l})::(insert_new_sort energy subtree_int q)
            else subtree_int::list_of_tree_int
+
+let rec insert_new_sort_bis energy subtree_int list_of_tree_int = (*For the discrete case, the first sort for the sons of a Server following:   (energy.speeds.(i) - l >energy.speeds.(i') - l' || (energy.speeds.(i) - l  = energy.speeds.(i') - l' && i>i')) *)
+   match list_of_tree_int with 
+     | [] -> [subtree_int]
+     | ServerInt(a,b,{s=i;load = l})::q ->
+       match subtree_int with
+         |ServerInt(_,_,{s=i';load=l'}) -> 
+           if (energy.speeds.(i) -. l >energy.speeds.(i') -. l' || (energy.speeds.(i) -. l  = energy.speeds.(i') -. l' && i>i')) then ServerInt(a,b,{s=i;load = l})::(insert_new_sort_bis energy subtree_int q)
+           else subtree_int::list_of_tree_int
+
+
 
 let list_of_insert id =
   match id with
-    | _ -> insert_new_sort
+    | 0 -> insert_new_sort
+    | _ -> insert_new_sort_bis
 
 
-let rec new_sort id l1 l2 = match l1 with
+let rec new_sort id energy l1 l2 = match l1 with
   |[] -> l2
-  |p::q -> list_of_insert id p (new_sort id q l2)
+  |p::q -> list_of_insert id energy p (new_sort id energy  q l2)
 
 
-let rec slight_optim_discret id rev_usl_list_sons list_of_sons  serv_table remaining_space i= 
+(*For a given node, slight_optim_discret checks whether it is possible to increase its execution speed if this can decrease the execution speed of its sons.*)
+let rec slight_optim_discret id rev_usl_list_sons list_of_sons  energy remaining_space i= 
 (* the list of sons of a node sorted according to new_sort is ((List.rev rev_usl_list_sons) @@ list_of_sons) *)
  match list_of_sons with
   | [] -> (List.rev rev_usl_list_sons, false, remaining_space, i)
   | ServerInt(b,m,{s = 0; load = l'}) :: q ->           
           let new_rev_usl = ServerInt(b,m,{s = 0; load = l'}) :: rev_usl_list_sons in
-          slight_optim_discret id new_rev_usl q  serv_table remaining_space i
+          slight_optim_discret id new_rev_usl q  energy remaining_space i
   | ServerInt(b,m,{s = i'; load = l'}) :: q -> 
-      if (l' -. serv_table.(i'-1)) <= remaining_space then (*First can we do something without impacting the overall energy (no mode change)*)
+      if (l' -. energy.speeds.(i'-1)) <= remaining_space then (*First can we do something without impacting the overall energy (no mode change)*)
         begin
-          let temp = new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q in
+          let temp = new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q in
           let sorted_sons = List.rev_append rev_usl_list_sons temp in
-          (sorted_sons, true, (remaining_space -. (l' -. serv_table.(i'-1))), i)
+          (sorted_sons, true, (remaining_space -. (l' -. energy.speeds.(i'-1))), i)
         end
       else 
-      if i+1 = (Array.length serv_table)  then (*If we cannot increase the speed of the father then do nothing for this son*)
+      if i+1 = (Array.length energy.speeds)  then (*If we cannot increase the speed of the father then do nothing for this son*)
         let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
-        slight_optim_discret id new_rev_usl q  serv_table remaining_space i
+        slight_optim_discret id new_rev_usl q  energy remaining_space i
       else 
-        let new_energy = serv_table.(i+1)*. serv_table.(i+1)*. serv_table.(i+1) +. serv_table.(i'-1)*. serv_table.(i'-1)*. serv_table.(i'-1) in
-        let old_energy = serv_table.(i)*. serv_table.(i)*. serv_table.(i) +. serv_table.(i')*. serv_table.(i')*. serv_table.(i') in
-        if (new_energy > old_energy ) then (*Is it worth it to increase the speed of the father to decrease the speed of the son*)
+        let new_energy = energy_int_val (i+1) energy +. energy_int_val (i'-1) energy in
+        let old_energy = energy_int_val (i) energy +. energy_int_val (i') energy in
+        if (new_energy > old_energy ) then (*Is it not worth it to increase the speed of the father to decrease the speed of the son*)
           let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
-          slight_optim_discret id new_rev_usl q  serv_table remaining_space i
+          slight_optim_discret id new_rev_usl q  energy remaining_space i
         else
-          if (l' -. serv_table.(i'-1)) <= (remaining_space +.serv_table.(i+1) -. serv_table.(i)) then (* If there is enough room when we add one mode*)
-            let temp = new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q in
+          if (l' -. energy.speeds.(i'-1)) <= (remaining_space +.energy.speeds.(i+1) -. energy.speeds.(i)) then (* If there is enough room when we add one mode*)
+            let temp = new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q in
             let sorted_sons = List.rev_append rev_usl_list_sons temp in
-            (sorted_sons, true, (remaining_space+. serv_table.(i+1) -. serv_table.(i) -. (l' -. serv_table.(i'-1)) ), i+1)
+            printf "coucou";
+            (sorted_sons, true, (remaining_space+. energy.speeds.(i+1) -. energy.speeds.(i) -. (l' -. energy.speeds.(i'-1)) ), i+1)
           else
             let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in
-            slight_optim_discret id new_rev_usl q  serv_table remaining_space i
+            slight_optim_discret id new_rev_usl q  energy remaining_space i
 
 
 
 
 
 
-let rec optim_discret id t serv_table =
+let rec optim_discret id t energy =
   match t with
   |ServerInt([],_,_) -> t
   |ServerInt(a,n,{s = i; load = l}) -> 
     begin
-      let sorted_sons = ref (new_sort id a []) in
-      let ServerInt(_,_,{s=i';load =_}) = List.hd (!sorted_sons) in
+      let sorted_sons = ref (new_sort id energy a []) in
       let cont =ref true in
       let cont_slight = ref true in
-      let iref = ref (max i' i) in
-      let remaining_space = ref (serv_table.(!iref) -. l) in
+      let rec compute_iref list_of_sons i_temp=
+      match list_of_sons with
+        | [] -> i_temp
+        | ServerInt(_,_,{s=i';load =_}) :: q -> compute_iref q (max i_temp i')
+      in
+      let iref = ref (compute_iref (!sorted_sons) i) in
+
+      let remaining_space = ref (energy.speeds.(!iref) -. l) in
       while !cont_slight do
       while ( !remaining_space > 0. && !cont) do
         match !sorted_sons with
@@ -490,27 +558,125 @@ let rec optim_discret id t serv_table =
               if i'=0 then cont := false 
               else
                 begin
-                  if (l' -. serv_table.(i'-1)) <= !remaining_space then
-                    (sorted_sons := new_sort id [ServerInt(b,m,{s = i'-1; load = serv_table.(i'-1)})] q;
-                    remaining_space := !remaining_space -. (l' -. serv_table.(i'-1)))
+                  if (l' -. energy.speeds.(i'-1)) <= !remaining_space then
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q;
+                    remaining_space := !remaining_space -. (l' -. energy.speeds.(i'-1)))
                   else
-                    (sorted_sons := new_sort id [ServerInt(b,m,{s = i'; load = (l'-.(!remaining_space))})] q;
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'; load = (l'-.(!remaining_space))})] q;
                     remaining_space :=0.)
               end
             end
           | _ -> failwith "list should not be empty"
       done;
-      let a,b,c,d = slight_optim_discret id [] !sorted_sons  serv_table !remaining_space !iref in
+      let a,b,c,d = slight_optim_discret id [] !sorted_sons  energy !remaining_space !iref in
       sorted_sons := a;
       cont_slight :=b;
       remaining_space := c;
       iref := d;
       cont:=!cont_slight
       done;
-      let new_sons = List.map (function x -> optim_discret id x serv_table) !sorted_sons in
-      ServerInt(new_sons, n, {s=(!iref); load = serv_table.(!iref)-.(!remaining_space)})
+      let new_sons = List.map (function x -> optim_discret id x energy) !sorted_sons in
+      ServerInt(new_sons, n, {s=(!iref); load = energy.speeds.(!iref)-.(!remaining_space)})
+    end
+
+let rec optim_discret_v2 id t energy =
+  match t with
+  |ServerInt([],_,_) -> t
+  |ServerInt(a,n,{s = i; load = l}) -> 
+    begin
+      let sorted_sons = ref (new_sort id energy a []) in
+      let rec compute_iref list_of_sons i_temp=
+      match list_of_sons with
+        | [] -> i_temp
+        | ServerInt(_,_,{s=i';load =_}) :: q -> compute_iref q (max i_temp i')
+      in
+      let iref = ref (compute_iref (!sorted_sons) i) in
+
+      let cont =ref true in
+      let cont_slight = ref true in
+      let remaining_space = ref (energy.speeds.(!iref) -. l) in
+(*      while !cont_slight do*)
+      while ( !remaining_space > 0. && !cont) do
+        match !sorted_sons with
+          | ServerInt(b,m,{s = i'; load = l'}) ::q ->
+            begin
+              if i'=0 then cont := false 
+              else
+                begin
+                  if (l' -. energy.speeds.(i'-1)) <= !remaining_space then
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q;
+                    remaining_space := !remaining_space -. (l' -. energy.speeds.(i'-1)))
+                  else
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'; load = (l'-.(!remaining_space))})] q;
+                    remaining_space :=0.)
+              end
+            end
+          | _ -> failwith "list should not be empty"
+      done;
+(*      let a,b,c,d = slight_optim_discret id [] !sorted_sons  energy !remaining_space !iref in*)
+(*      sorted_sons := a;*)
+(*      cont_slight :=false;*)
+(*      remaining_space := c;*)
+(*      iref := d;*)
+(*      cont:=!cont_slight*)
+(*      done;*)
+      let new_sons = List.map (function x -> optim_discret_v2 id x energy) !sorted_sons in
+      ServerInt(new_sons, n, {s=(!iref); load = energy.speeds.(!iref)-.(!remaining_space)})
     end
 
 
+let rec optim_discret_second_turn id t energy = 
+(**In the first turn (optim_discret), first we do not increase the server size above the one given by the continuous heuristic. In this second turn, we increase their speed when it improves the energy consumption.**)
+  match t with
+  |ServerInt([],_,_) -> t
+  |ServerInt(a,n,{s = i; load = l}) -> 
+    begin
+
+      let sorted_sons = ref (new_sort id energy a []) in
+      let rec compute_iref list_of_sons i_temp=
+      match list_of_sons with
+        | [] -> i_temp
+        | ServerInt(_,_,{s=i';load =_}) :: q -> compute_iref q (max i_temp i')
+      in
+      let iref = ref (compute_iref (!sorted_sons) (i+1)) in
+
+      let cont =ref (!iref = Array.length energy.speeds) in (*We can increase its speed only if it is not the last speed.*)
+(*      let cont_slight = ref !cont in*)
+
+      let remaining_space =  ref (if !cont then 0. else (energy.speeds.(!iref) -. l) ) in 
+
+      let new_energy = ref (if !cont then 0. else (energy_int_val (!iref) energy) ) in
+      let initial_energy = ref (if !cont then 0. else (energy_int_val i energy) ) in
+      let modif = ref false in (*to call the loop a second time, we will check whether the energy has been improved (even by 0), and whether there has been a modif (in case the energy did not improve)*)
+
+(*The goal here is to upgrade the speed of the server to !iref, supposedly equal to i+1, and check whether or not it improves the energy consumption.*)
+      while ( !remaining_space > 0. && !cont) do
+        match !sorted_sons with
+          | ServerInt(b,m,{s = i'; load = l'}) ::q ->
+            begin
+              if i'=0 then cont := false 
+              else
+                begin
+                 initial_energy := !initial_energy +. (energy_int_val i' energy);
+                  if (l' -. energy.speeds.(i'-1)) <= !remaining_space then
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q;
+                    new_energy := !new_energy +. energy_int_val (i'-1) energy;
+                    modif := true;
+                    remaining_space := !remaining_space -. (l' -. energy.speeds.(i'-1)))
+                  else
+                    (sorted_sons := new_sort id energy [ServerInt(b,m,{s = i'; load = (l'-.(!remaining_space))})] q;
+                    new_energy := !new_energy +. energy_int_val (i') energy;
+                    remaining_space :=0.)
+              end
+            end
+          | _ -> failwith "list should not be empty"
+      done;
+      if !new_energy < !initial_energy && !modif then
+        let new_sons = List.map (function x -> optim_discret_second_turn id x energy) !sorted_sons in
+        ServerInt(new_sons, n, {s=(!iref); load = energy.speeds.(!iref)-.(!remaining_space)})
+      else
+        let new_sons = List.map (function x -> optim_discret_second_turn id x energy) a in
+        ServerInt(new_sons,n,{s = i; load = l})
+    end
 
 
