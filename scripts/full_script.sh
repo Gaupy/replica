@@ -69,6 +69,32 @@ case $9 in
 #	echo "You have tried an expe_number that is not yet implemented."
 	;;
 	2 )
+	for static in `seq 0 1000 $5`; do
+		for iter in `seq 1 $8`; do
+			./test ${3} ${static} $9 ${iter}
+			rm size=${3}_idle=${static}_expe=$9_iter=${iter}.dat
+			if [ "${3}" -lt 26 ]; then
+				cplex -c "r pbm_size=${3}_idle=${static}_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2 >> result_${3}_${static}_${9}_${iter}.temp
+			else
+				echo "" >> result_${3}_${static}_${9}_${iter}.temp
+			fi
+			rm pbm_size=${3}_idle=${static}_expe=$9_iter=${iter}_general.lp
+		done
+	done
+	for static in `seq 0 1000 $5`; do
+		for iter in `seq 1 $8`; do
+			cat result_${3}_${static}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+			rm result_${3}_${static}_${9}_${iter}.temp
+		done
+	done
+	rm *.log
+	cd ../exploitation_results
+	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
+	make
+	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
+	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
+	;;
+	3 )
 	for iter in `seq 1 $8`; do
 		./test ${3} $5 $9 ${iter}
 		rm size=${3}_idle=${5}_expe=$9_iter=${iter}.dat
@@ -80,39 +106,15 @@ case $9 in
 		rm pbm_size=${3}_idle=$5_expe=$9_iter=${iter}_general.lp
 	done
 	for iter in `seq 1 $8`; do
-		cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$7_$9.score
+		cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
 		rm result_${3}_${5}_${9}_${iter}.temp
 	done
 	rm *.log
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
 	make
-	./comp conf < ../results/result_$3_$4_$7_$9.score
-	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
-	;;
-	3 )
-	for static in `seq 0 1000 $5`; do
-		for iter in `seq 1 $8`; do
-			./test ${3} $5 $9 ${iter}
-			rm size=${3}_idle=${5}_expe=$9_iter=${iter}.dat
-			if [ "${3}" -lt 26 ]; then
-				cplex -c "r pbm_size=${3}_idle=$5_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d " " -f 10 >> result_${3}_${5}_${9}_${iter}.temp
-			else
-				echo "" >> result_${3}_${5}_${9}_${iter}.temp
-			fi
-			rm pbm_size=${3}_idle=$5_expe=$9_iter=${iter}_general.lp
-		done
-		for iter in `seq 1 $8`; do
-			cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${3}_${5}_${9}_${iter}.temp
-		done
-	done
-	rm *.log
-	cd ../exploitation_results
-	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
 	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
+	gnuplot load_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	* ) 
 	echo "You have tried an expe_number that is not yet implemented."
