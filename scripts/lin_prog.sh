@@ -15,12 +15,6 @@ case $9 in
 			rm pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp
 		done
 	done
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
-			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${nodes}_${5}_${9}_${iter}.temp
-		done
-	done
 	rm *.log
 	;;
 	1 )
@@ -34,12 +28,6 @@ case $9 in
 				echo "" >> result_${nodes}_${5}_${9}_${iter}.temp
 			fi
 			rm pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp
-		done
-	done
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
-			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${nodes}_${5}_${9}_${iter}.temp
 		done
 	done
 	rm *.log
@@ -57,12 +45,6 @@ case $9 in
 			rm pbm_size=${3}_idle=${static}_expe=$9_iter=${iter}_general.lp
 		done
 	done
-	for static in `seq 0 1000 $5`; do
-		for iter in `seq 1 $8`; do
-			cat result_${3}_${static}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${3}_${static}_${9}_${iter}.temp
-		done
-	done
 	rm *.log
 	;;
 	3 )
@@ -75,10 +57,6 @@ case $9 in
 			echo "" >> result_${3}_${5}_${9}_${iter}.temp
 		fi
 		rm pbm_size=${3}_idle=$5_expe=$9_iter=${iter}_general.lp
-	done
-	for iter in `seq 1 $8`; do
-		cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-		rm result_${3}_${5}_${9}_${iter}.temp
 	done
 	rm *.log
 	;;
