@@ -3,8 +3,8 @@ cd ../results
 gcc ../LP/new_lp.c -o test -lglpk -fno-stack-protector 
 case $9 in
 	0 )
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}
 			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
 			if [ "${nodes}" -lt 31 ]; then
@@ -18,8 +18,8 @@ case $9 in
 	rm *.log
 	;;
 	1 )
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}
 			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
 			if [ "${nodes}" -lt 26 ]; then
@@ -33,8 +33,8 @@ case $9 in
 	rm *.log
 	;;
 	2 )
-	for static in `seq 0 1000 $5`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for static in `seq 0 1000 $5`; do
 			./test ${3} ${static} $9 ${iter}
 			rm size=${3}_idle=${static}_expe=$9_iter=${iter}.dat
 			if [ "${3}" -lt 26 ]; then
