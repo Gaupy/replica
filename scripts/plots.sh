@@ -1,6 +1,6 @@
 #!/bin/sh
 case $9 in
-	0 )
+	0|4 )
 	cd ../results
 	for nodes in `seq 1 $3`; do
 		for iter in `seq 1 $8`; do
@@ -15,7 +15,7 @@ case $9 in
 	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 #	echo "You have tried an expe_number that is not yet implemented."
 	;;
-	1 )
+	1|5 )
 	cd ../results
 	for nodes in `seq 1 $3`; do
 		for iter in `seq 1 $8`; do

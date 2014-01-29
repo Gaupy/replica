@@ -15,7 +15,7 @@ make opt
 cd results
 gcc ../LP/new_lp.c -o test -lglpk -fno-stack-protector 
 case $9 in
-	0 )
+	0|4 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}
@@ -41,7 +41,7 @@ case $9 in
 	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
 	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
-	1 )
+	1|5 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}

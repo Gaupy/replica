@@ -2,7 +2,7 @@
 cd ../results
 gcc ../LP/new_lp.c -o test -lglpk -fno-stack-protector 
 case $9 in
-	0 )
+	0|4 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}
@@ -17,7 +17,7 @@ case $9 in
 	done
 	rm *.log
 	;;
-	1 )
+	1|5 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			./test ${nodes} $5 $9 ${iter}
