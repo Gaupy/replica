@@ -166,7 +166,7 @@ let script config_file =
             close_out oo
           done
       end
-    | 4 | * -> (*  *)
+    | 4 | _ -> (*  *)
       begin
         for iter = 1 to (param.number_of_tests) do
           for vertex_number = 1 to (param.size_of_tree) do
