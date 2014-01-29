@@ -2,8 +2,8 @@
 case $9 in
 	0|4 )
 	cd ../results
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for nodes in `seq 1 $3`; do
 			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
 			rm result_${nodes}_${5}_${9}_${iter}.temp
 		done
@@ -17,8 +17,8 @@ case $9 in
 	;;
 	1|5 )
 	cd ../results
-	for nodes in `seq 1 $3`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for nodes in `seq 1 $3`; do
 			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
 			rm result_${nodes}_${5}_${9}_${iter}.temp
 		done
@@ -32,8 +32,8 @@ case $9 in
 	;;
 	2|6 )
 	cd ../results
-	for static in `seq 0 1000 $5`; do
-		for iter in `seq 1 $8`; do
+	for iter in `seq 1 $8`; do
+		for static in `seq 0 1000 $5`; do
 			cat result_${3}_${static}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
 			rm result_${3}_${static}_${9}_${iter}.temp
 		done
