@@ -9,7 +9,7 @@ open Algos
 
 let algo_discret id t size_t n energy =
    match id with
-    | 0 -> 
+    | 0 ->  (* Speed *)
       let _, t_cont = algo_intelligent t n in 
       let t_temp = tarbre_to_arbre_int t_cont energy in
       let matrix = make_prec_matrix_server_tree_int t_temp size_t in
@@ -27,13 +27,13 @@ let algo_discret id t size_t n energy =
       let matrix = make_prec_matrix_server_tree_int t_temp size_t in
       let t_discrete = optim_discret 0 (t_temp) energy in
         (energy_int t_discrete energy, matrix)
-    | 3 -> 
+    | 3 -> (* Excess *)
       let _, t_cont = algo_intelligent t n in 
       let t_temp = tarbre_to_arbre_int t_cont energy in
       let matrix = make_prec_matrix_server_tree_int t_temp size_t in
       let t_discrete = optim_discret 1 (t_temp) energy in
         (energy_int t_discrete energy, matrix)
-    | 4 -> 
+    | 4 -> (* Greedy *)
       let _, t_cont = algo_intelligent t n in 
       let t_temp = tarbre_to_arbre_int t_cont energy in
       let matrix = make_prec_matrix_server_tree_int t_temp size_t in

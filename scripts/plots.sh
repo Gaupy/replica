@@ -30,7 +30,7 @@ case $9 in
 	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 #	echo "You have tried an expe_number that is not yet implemented."
 	;;
-	2 )
+	2|6 )
 	cd ../results
 	for static in `seq 0 1000 $5`; do
 		for iter in `seq 1 $8`; do
@@ -44,7 +44,7 @@ case $9 in
 	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
 	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
 	;;
-	3 )
+	3|7 )
 	cd ../results
 	for iter in `seq 1 $8`; do
 		cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
