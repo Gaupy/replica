@@ -225,13 +225,13 @@ let script config_file =
             let prec_max = Array.make number_heur 0. in
             for j = 1 to (vertex_number) do
               try 
-                let result_discret_heur0, matrix_heur0 = algo_discret 3 tree (vertex_number) j new_energy in
+                let result_discret_heur0, matrix_heur0 = algo_discret 4 tree (vertex_number) j new_energy in
                   if result_discret_heur0 < energy_min.(0) then 
                     ( energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
-                let result_discret_heur1, matrix_heur1 = algo_discret 5 tree (vertex_number) j energy in
+                let result_discret_heur1, matrix_heur1 = algo_discret 0 tree (vertex_number) j energy in
                   if result_discret_heur1 < energy_min.(1) then 
                     ( energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
-                let result_discret_heur2, matrix_heur2 = algo_discret 7 tree (vertex_number) j new_energy in
+                let result_discret_heur2, matrix_heur2 = algo_discret 3 tree (vertex_number) j new_energy in
                   if result_discret_heur2 < energy_min.(2) then 
                     ( energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
               with
@@ -264,13 +264,13 @@ let script config_file =
             let prec_max = Array.make number_heur 0. in
             for j = 1 to (vertex_number) do
               try 
-                let result_discret_heur0, matrix_heur0 = algo_discret 3 tree (vertex_number) j energy in
+                let result_discret_heur0, matrix_heur0 = algo_discret 4 tree (vertex_number) j energy in
                   if result_discret_heur0 < energy_min.(0) then 
                     ( energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
-                let result_discret_heur1, matrix_heur1 = algo_discret 5 tree (vertex_number) j energy in
+                let result_discret_heur1, matrix_heur1 = algo_discret 0 tree (vertex_number) j energy in
                   if result_discret_heur1 < energy_min.(1) then 
                     ( energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
-                let result_discret_heur2, matrix_heur2 = algo_discret 7 tree (vertex_number) j energy in
+                let result_discret_heur2, matrix_heur2 = algo_discret 3 tree (vertex_number) j energy in
                   if result_discret_heur2 < energy_min.(2) then 
                     ( energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
               with
