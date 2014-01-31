@@ -88,9 +88,10 @@ let script config_file =
     | 2 -> (*  *)
       begin
         let static = ref 0. in
+        let step = (energy.static /. 20.) in
 	while !static <= energy.static do
           let new_energy ={static = !static; speeds = energy.speeds} in
-          static := !static +. 1000.; (*the steps of the static energy are by 1000.*)
+          static := !static +. step;
           for iter = 1 to (param.number_of_tests) do
             let vertex_number = (param.size_of_tree) in
             let tree = match param.tree_type with
@@ -208,9 +209,10 @@ let script config_file =
     | 6 -> (*  *)
       begin
         let static = ref 0. in
+        let step = (energy.static /. 20.) in
 	while !static <= energy.static do
           let new_energy ={static = !static; speeds = energy.speeds} in
-          static := !static +. 1000.; (*the steps of the static energy are by 1000.*)
+          static := !static +. step;
           for iter = 1 to (param.number_of_tests) do
             let vertex_number = (param.size_of_tree) in
             let tree = match param.tree_type with
