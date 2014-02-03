@@ -83,7 +83,8 @@ case $9 in
 		done
 	done
 	for iter in `seq 1 $8`; do
-		for static in `seq 0 1000 $5`; do
+		r=$(echo "$5/20" | bc)
+		for static in `seq 0 $r $5`; do
 			cat result_${3}_${static}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
 			rm result_${3}_${static}_${9}_${iter}.temp
 		done
