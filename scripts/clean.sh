@@ -41,7 +41,8 @@ case $9 in
 	;;
 	2|6 )
 	for iter in `seq 1 $8`; do
-		for static in `seq 0 1000 $5`; do
+		r=$(echo "$5/20" | bc)
+		for static in `seq 0 $r $5`; do
 			rm size=${3}_idle=${static}_expe=$9_iter=${iter}.dat
 			rm pbm_size=${3}_idle=${static}_expe=$9_iter=${iter}_general.lp
 		done
