@@ -11,7 +11,7 @@
 cd ..
 cd results
 case $9 in
-	0 )
+	0|4 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
@@ -25,7 +25,7 @@ case $9 in
 	done
 	rm *.log
 	;;
-	1 )
+	1|5 )
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
 			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
@@ -39,7 +39,7 @@ case $9 in
 	done
 	rm *.log
 	;;
-	2 )
+	2|6 )
 	for iter in `seq 1 $8`; do
 		for static in `seq 0 1000 $5`; do
 			rm size=${3}_idle=${static}_expe=$9_iter=${iter}.dat
@@ -53,7 +53,7 @@ case $9 in
 	done
 	rm *.log
 	;;
-	3 )
+	3|7 )
 	for iter in `seq 1 $8`; do
 		rm size=${3}_idle=${5}_expe=$9_iter=${iter}.dat
 		rm pbm_size=${3}_idle=$5_expe=$9_iter=${iter}_general.lp
