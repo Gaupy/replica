@@ -32,7 +32,7 @@ where one should replace
 * $4(: int) by number_of_speeds (the number of speeds, count speed 0)
 * $5(: int) by static (the static energy)
 * $6(: int) by max_speed (the maximum speed)
-* $7(: int) by regularity_speeds (1 for equally distances speeds, 0 for random speed between 0 and max_speed)
+* $7(: int) by regularity_speeds (1 for equally distances speeds, 0 for the speeds that use the ratio (to the max_speed) equal to the Intel Xscale machine)
 * $8(: int) by number_of_tests
 * $9(: int) by the experiment number (in 0 and 1 we study the impact of the size of the tree, in 2 we study the impact of the static energy, in 3 the impact of the load of the tree).
 
