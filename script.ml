@@ -226,17 +226,14 @@ let script config_file =
             for j = 1 to (vertex_number) do
               try 
                 let result_discret_heur0, matrix_heur0 = algo_discret 4 tree (vertex_number) j new_energy in
-                  printf "new= %f, old =%f \n" result_discret_heur0 energy_min.(0);
                   if result_discret_heur0 < energy_min.(0) then 
-                    (printf "modif 0\n\n"; energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
+                    (energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
                 let result_discret_heur1, matrix_heur1 = algo_discret 0 tree (vertex_number) j new_energy in
-                  printf "new= %f, old =%f \n" result_discret_heur1 energy_min.(1);
                   if result_discret_heur1 < energy_min.(1) then 
-                    (printf "modif 1\n\n"; energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
+                    (energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
                 let result_discret_heur2, matrix_heur2 = algo_discret 3 tree (vertex_number) j new_energy in
-                  printf "new= %f, old =%f \n" result_discret_heur2 energy_min.(2);
                   if result_discret_heur2 < energy_min.(2) then 
-                    (printf "modif 2\n\n"; energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
+                    (energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
               with
                 | OverloadedNode(_,_) -> ()
             done;
