@@ -61,6 +61,16 @@ case $9 in
 	done
 	rm *.log
 	;;
+	8 )
+	for iter in `seq 1 $8`; do
+		r=$(echo "$3/20" | bc)
+		for nodes in `seq $r $r $3`; do
+			./test ${nodes} $5 $9 ${iter}
+			rm size=${nodes}_idle=${5}_expe=$9_iter=${iter}.dat
+			rm pbm_size=${nodes}_idle=$5_expe=$9_iter=${iter}_general.lp
+		done
+	done
+	;;
 	* ) 
 	echo "You have tried an expe_number that is not yet implemented."
 	;;
