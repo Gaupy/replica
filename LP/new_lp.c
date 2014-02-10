@@ -260,16 +260,18 @@ int main(int argc, char *argv[])
 	int expe_number;
 	double result_greedy, result_move1, result_move2;
 	int x;
+	int spe;
 	double y;
 	float verif;
-	if(argc != 5) {
+	if(argc != 6) {
        printf("Usage: %s number-of-rings\n",argv[0]);
        return 1;}
 	t = atoi(argv[1]);
 	s = atoi(argv[2]);
-	l = atoi(argv[3]);
-	iter = atoi(argv[4]);
-        sprintf(name, "size=%d_idle=%d_expe=%d_iter=%d.dat", t, s, l, iter);
+	spe = atoi(argv[3]);
+	l = atoi(argv[4]);
+	iter = atoi(argv[5]);
+        sprintf(name, "size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat", t, s, spe, l, iter);
 	if ((fp = fopen(name, "r")) == NULL ) {
 /*		printf("No results for size=%d_serv=%d_iter=%d \n", t, s, iter);*/
 		exit(EXIT_FAILURE);
@@ -316,7 +318,7 @@ int main(int argc, char *argv[])
 	init();
 
 /* If you have access to cplex, use this to solve the problem*/
-	sprintf(name, "pbm_size=%d_idle=%d_expe=%d_iter=%d_general.lp", t, s, l, iter);
+	sprintf(name, "pbm_size=%d_idle=%d_speeds=%d_expe=%d_iter=%d_general.lp", t, s, spe, l, iter);
 	int ret = glp_write_lp(lp, NULL, name);
 
 /*	if (expe_number = 1)*/ /* When the expe number is 1, we study trees that have between 1 and t noeuds.*/
@@ -335,14 +337,14 @@ int main(int argc, char *argv[])
 
 
 /*This file is where we write the results obtained with the caml procedure and the verifications.*/
-        sprintf(name, "result_%d_%d_%d_%d.temp", t, s, l, iter);
+        sprintf(name, "result_%d_%d_%d_%d_%d.temp", t, s, spe, l, iter);
 	fp2 = fopen(name,"w");
 	if (fp2 == NULL) {
 	  fprintf(stderr, "Can't open output file %s!\n", name);
 	  exit(1);
 	}
 
-	fprintf(fp2,"%d \t %d \t %d \t %d \t %d \t", t, s, l, iter, number_of_heur);
+	fprintf(fp2,"%d \t %d \t %d \t%d \t %d \t %d \t", t, s, spe, l, iter, number_of_heur);
 
 	for (k=1; k<= number_of_heur; k++)
 	{

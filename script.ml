@@ -72,7 +72,7 @@ let script config_file =
                   with
                     | OverloadedNode(_,_) -> ()
                 done;
-                let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.expe_number) iter in 
+                let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
                 let oo = open_out st in
                 fprintf oo "%d\n%d\n" param.expe_number number_heur;
                 for i= 0 to number_heur -1 do
@@ -116,7 +116,7 @@ let script config_file =
               with
                 | OverloadedNode(_,_) -> ()
             done;
-            let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float new_energy.static) (param.expe_number) iter in 
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float new_energy.static) (param.number_of_speeds) (param.expe_number) iter in 
             let oo = open_out st in
             fprintf oo "%d\n%d\n" param.expe_number number_heur;
             for i= 0 to number_heur -1 do
@@ -155,7 +155,7 @@ let script config_file =
               with
                 | OverloadedNode(_,_) -> ()
             done;
-            let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.expe_number) iter in 
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
             let oo = open_out st in
             fprintf oo "%d\n%d\n" param.expe_number number_heur;
             for i= 0 to number_heur -1 do
@@ -193,7 +193,7 @@ let script config_file =
                   with
                     | OverloadedNode(_,_) -> ()
                 done;
-                let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.expe_number) iter in 
+                let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
                 let oo = open_out st in
                 fprintf oo "%d\n%d\n" param.expe_number number_heur;
                 for i= 0 to number_heur -1 do
@@ -237,7 +237,7 @@ let script config_file =
               with
                 | OverloadedNode(_,_) -> ()
             done;
-            let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float new_energy.static) (param.expe_number) iter in 
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float new_energy.static) (param.number_of_speeds) (param.expe_number) iter in 
             let oo = open_out st in
             fprintf oo "%d\n%d\n" param.expe_number number_heur;
             for i= 0 to number_heur -1 do
@@ -276,7 +276,7 @@ let script config_file =
               with
                 | OverloadedNode(_,_) -> ()
             done;
-            let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.expe_number) iter in 
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
             let oo = open_out st in
             fprintf oo "%d\n%d\n" param.expe_number number_heur;
             for i= 0 to number_heur -1 do
@@ -317,7 +317,7 @@ let script config_file =
               with
                 | OverloadedNode(_,_) -> ()
             done;
-            let st = sprintf "results/size=%d_idle=%d_expe=%d_iter=%d.dat" (!vertex_number) (int_of_float energy.static) (param.expe_number) iter in 
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (!vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
             let oo = open_out st in
             fprintf oo "%d\n%d\n" param.expe_number number_heur;
             for i= 0 to number_heur -1 do
@@ -330,6 +330,48 @@ let script config_file =
             vertex_number := !vertex_number + step;
           done
         done
+      end
+    | 9 -> (* We study the impact of the number of speeds.*)
+      begin
+          for iter = 1 to (param.number_of_tests) do
+            let vertex_number = (param.size_of_tree) in
+            let tree = match param.tree_type with
+              | _ -> cree_alea (vertex_number) (param.rmax)
+            in 
+            for number_speeds = 2 to param.number_of_speeds+1 do
+              let first_matrix = make_prec_matrix_full_tree tree (vertex_number) in
+              let number_heur = 3 in
+              let energy_min = Array.make number_heur max_float in
+              let server_min = Array.make number_heur (-1) in
+              let prec_max = Array.make number_heur 0. in
+              let new_tab_speeds = reg_tab_speeds number_speeds param.max_speed in
+              let new_energy = {static = param.static; speeds = new_tab_speeds} in
+              for j = 1 to (vertex_number) do
+                try 
+                  let result_discret_heur0, matrix_heur0 = algo_discret 4 tree (vertex_number) j new_energy in
+                    if result_discret_heur0 < energy_min.(0) then 
+                      ( energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
+                  let result_discret_heur1, matrix_heur1 = algo_discret 0 tree (vertex_number) j new_energy in
+                    if result_discret_heur1 < energy_min.(1) then 
+                      ( energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
+                  let result_discret_heur2, matrix_heur2 = algo_discret 3 tree (vertex_number) j new_energy in
+                    if result_discret_heur2 < energy_min.(2) then 
+                      ( energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
+                with
+                  | OverloadedNode(_,_) -> ()
+              done;
+              let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (vertex_number) (int_of_float new_energy.static) (number_speeds) (param.expe_number) iter in 
+              let oo = open_out st in
+              fprintf oo "%d\n%d\n" param.expe_number number_heur;
+              for i= 0 to number_heur -1 do
+                fprintf oo "%d\t%f\t%f\n" server_min.(i) energy_min.(i) prec_max.(i);
+              done;
+              fprintf oo "%d\t%d\n" number_speeds vertex_number; 
+              print_set_of_speeds new_energy oo;
+              print_square_matrix first_matrix oo;
+              close_out oo;
+            done;
+          done
       end
 
 let () = script Sys.argv.(1)
