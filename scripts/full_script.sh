@@ -144,7 +144,7 @@ case $9 in
 	for iter in `seq 1 $8`; do
 		for speeds in `seq 1 $4`; do
 			./test $3 $5 ${speeds} $9 ${iter}
-#			rm size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}.dat
+			rm size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}.dat
 			if [ "$3" -lt 26 ]; then
 				cplex -c "r pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2 >> result_$3_${5}_${speeds}_${9}_${iter}.temp
 				cplex -c "r pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2
@@ -157,7 +157,7 @@ case $9 in
 	for iter in `seq 1 $8`; do
 		for speeds in `seq 1 $4`; do
 			cat result_$3_${5}_${speeds}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-#			rm result_$3_${5}_${speeds}_${9}_${iter}.temp
+			rm result_$3_${5}_${speeds}_${9}_${iter}.temp
 		done
 	done
 	cd ../exploitation_results
