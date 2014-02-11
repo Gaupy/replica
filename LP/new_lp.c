@@ -292,6 +292,7 @@ int main(int argc, char *argv[])
 	}
 
 	fscanf(fp,"%d",&K);
+	K = K+1;
 	fscanf(fp,"%d",&T);
 	S = T;	/*The number of servers is not important anymore. */
 	fscanf(fp,"%lf",&energy_static);

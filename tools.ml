@@ -523,7 +523,6 @@ let rec slight_optim_discret id rev_usl_list_sons list_of_sons  energy remaining
           if (l' -. energy.speeds.(i'-1)) <= (remaining_space +.energy.speeds.(i+1) -. energy.speeds.(i)) then (* If there is enough room when we add one mode*)
             let temp = new_sort id energy [ServerInt(b,m,{s = i'-1; load = energy.speeds.(i'-1)})] q in
             let sorted_sons = List.rev_append rev_usl_list_sons temp in
-            printf "coucou";
             (sorted_sons, true, (remaining_space+. energy.speeds.(i+1) -. energy.speeds.(i) -. (l' -. energy.speeds.(i'-1)) ), i+1)
           else
             let new_rev_usl = ServerInt(b,m,{s = i'; load = l'}) :: rev_usl_list_sons in

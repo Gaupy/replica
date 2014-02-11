@@ -4,8 +4,8 @@ case $9 in
 	cd ../results
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
-			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${nodes}_${5}_${9}_${iter}.temp
+			cat result_${nodes}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+			rm result_${nodes}_${5}_${4}_${9}_${iter}.temp
 		done
 	done
 	cd ../exploitation_results
@@ -19,8 +19,8 @@ case $9 in
 	cd ../results
 	for iter in `seq 1 $8`; do
 		for nodes in `seq 1 $3`; do
-			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${nodes}_${5}_${9}_${iter}.temp
+			cat result_${nodes}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+			rm result_${nodes}_${5}_${4}_${9}_${iter}.temp
 		done
 	done
 	cd ../exploitation_results
@@ -48,8 +48,8 @@ case $9 in
 	3|7 )
 	cd ../results
 	for iter in `seq 1 $8`; do
-		cat result_${3}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-		rm result_${3}_${5}_${9}_${iter}.temp
+		cat result_${3}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+		rm result_${3}_${5}_${4}_${9}_${iter}.temp
 	done
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
@@ -60,9 +60,10 @@ case $9 in
 	8 )
 	cd ../results
 	for iter in `seq 1 $8`; do
+	r=$(echo "$3/20" | bc)
 		for nodes in `seq $r $r $3`; do
-			cat result_${nodes}_${5}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			rm result_${nodes}_${5}_${9}_${iter}.temp
+			cat result_${nodes}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+			rm result_${nodes}_${5}_${4}_${9}_${iter}.temp
 		done
 	done
 	cd ../exploitation_results
