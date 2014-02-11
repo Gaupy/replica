@@ -147,7 +147,6 @@ case $9 in
 			rm size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}.dat
 			if [ "$3" -lt 26 ]; then
 				cplex -c "r pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2 >> result_$3_${5}_${speeds}_${9}_${iter}.temp
-				cplex -c "r pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2
 			else
 				echo "" >> result_$3_${5}_${speeds}_${9}_${iter}.temp
 			fi
