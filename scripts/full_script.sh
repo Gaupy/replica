@@ -150,7 +150,7 @@ case $9 in
 			else
 				echo "" >> result_$3_${5}_${speeds}_${9}_${iter}.temp
 			fi
-#			rm pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp
+			rm pbm_size=$3_idle=$5_speeds=${speeds}_expe=$9_iter=${iter}_general.lp
 		done
 	done
 	for iter in `seq 1 $8`; do

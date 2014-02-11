@@ -338,7 +338,7 @@ let script config_file =
             let tree = match param.tree_type with
               | _ -> cree_alea (vertex_number) (param.rmax)
             in 
-            for number_speeds = 2 to param.number_of_speeds+1 do
+            for number_speeds = 1 to param.number_of_speeds do
               let first_matrix = make_prec_matrix_full_tree tree (vertex_number) in
               let number_heur = 3 in
               let energy_min = Array.make number_heur max_float in

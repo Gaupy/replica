@@ -385,9 +385,9 @@ let rec opt_int tr = match tr with (* fonction qui calcule la répartition optim
 
 (*Creation of a regular table of speeds*)
 let reg_tab_speeds n  max_speed= 
-  let sol = Array.make n 0. in
-  for i=1 to n-1 do
-    sol.(i) <- (float_of_int i)*. ((float_of_int max_speed) /. (float_of_int (n-1)))
+  let sol = Array.make (n+1) 0. in
+  for i=1 to n do
+    sol.(i) <- (float_of_int i)*. ((float_of_int max_speed) /. (float_of_int n))
   done;
   sol
 
