@@ -66,8 +66,9 @@ case $9 in
 		r=$(echo "$3/20" | bc)
 		for nodes in `seq $r $r $3`; do
 			./test ${nodes} $5 $4 $9 ${iter}
-			rm size=${nodes}_idle=$5_speeds=$4_expe=$9_iter=${iter}.dat
+#			rm size=${nodes}_idle=$5_speeds=$4_expe=$9_iter=${iter}.dat
 			rm pbm_size=${nodes}_idle=$5_speeds=$4_expe=$9_iter=${iter}_general.lp
+			echo "">> result_${nodes}_${5}_${4}_${9}_${iter}.temp
 		done
 	done
 	;;

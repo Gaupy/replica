@@ -6,8 +6,8 @@
 #include <math.h>
 
 #define LENGTH 200000 /* number of non-zero values in the LP formulation */
-#define MAX_TASK 100
-#define MAX_SERVERS 100
+#define MAX_TASK 300
+#define MAX_SERVERS 300
 #define MAX_SPEEDS 100
 #define NAME_LENGTH 200 /* name each variable and constraint */
 
@@ -273,7 +273,7 @@ int main(int argc, char *argv[])
 	iter = atoi(argv[5]);
         sprintf(name, "size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat", t, s, spe, l, iter);
 	if ((fp = fopen(name, "r")) == NULL ) {
-/*		printf("No results for size=%d_serv=%d_iter=%d \n", t, s, iter);*/
+		printf("No results for size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat \n", t, s, spe, l, iter);
 		exit(EXIT_FAILURE);
 	}
 
