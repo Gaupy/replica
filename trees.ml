@@ -35,6 +35,26 @@ let cree_alea n valmax = (* creates a random tree with n nodes and input smaller
   done;
   !arbre_init
 
+let cree_big_alea n valmax = (* creates a random tree with n nodes and input smaller than valmax*)
+  let valpossible = ref [[]] in
+  let i = ref 0 in
+  let new_val = valmax / 2 in
+  let arbre_init = ref (Node([],((float_of_int (Random.int (new_val*100)))/.100. +. float_of_int new_val))) in
+  let add_node () =
+    let taille = List.length (!valpossible) in
+    let next = Random.int taille in
+    let v = List.nth (!valpossible) next in
+    let a,b = addn v (!arbre_init) valmax in
+    arbre_init := a;
+    valpossible :=  !valpossible @ [List.rev (b :: List.rev (v))];
+  in
+  for k = 0 to (n-2) do
+    add_node ();
+    incr i;
+  done;
+  !arbre_init
+
+
 let cree_alea_binaire n valmax = (* creates a random binary tree with n nodes and input smaller than valmax*) 
   let valpossible = ref [[]] in
   let i = ref 0 in
