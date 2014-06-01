@@ -27,7 +27,7 @@ where one should replace
 -------------
 
 * $1(: int) by rmax (the maximum size of a request)
-* $2(: int) by tree_type (for the moment the only possibility is 0: a random tree)
+* $2(: int) by tree_type (0: a random tree,  1: a random tree with large number of requests)
 * $3(: int) by size_of_tree (the number of nodes in the tree)
 * $4(: int) by number_of_speeds (the number of speeds, count speed 0)
 * $5(: int) by static (the static energy)
