@@ -73,3 +73,36 @@ let algo_discret id t size_t n energy =
       let t_discrete = optim_discret 1 (t_temp) energy in
         (energy_int t_discrete energy, matrix)
 
+
+let algo_discret_time id t size_t n energy =
+   let a = Sys.time () in
+   match id with
+    | 0 ->  (* Speed *)
+      let _, t_cont = algo_intelligent t n in 
+      let t_temp = tarbre_to_arbre_int t_cont energy in
+      let matrix = make_prec_matrix_server_tree_int t_temp size_t in
+      let t_discrete = optim_discret 0 (t_temp) energy in
+      let b = Sys.time () in
+(*		Printf.printf "serveurs= %d, b-a=%f \n" n (b-.a);*)
+        (energy_int t_discrete energy, matrix, b -. a)
+    | 3 -> (* Excess *)
+      let _, t_cont = algo_intelligent t n in 
+      let t_temp = tarbre_to_arbre_int t_cont energy in
+      let matrix = make_prec_matrix_server_tree_int t_temp size_t in
+      let t_discrete = optim_discret 1 (t_temp) energy in
+      let b = Sys.time () in
+        (energy_int t_discrete energy, matrix, b -. a)
+    | 4 -> (* Greedy *)
+      let _, t_cont = algo_intelligent t n in 
+      let t_temp = tarbre_to_arbre_int t_cont energy in
+      let matrix = make_prec_matrix_server_tree_int t_temp size_t in
+      let b = Sys.time () in
+        (energy_int t_temp energy, matrix, b -. a)
+    | _ -> 
+      let _, t_cont = algo_intelligent t n in 
+      let t_temp = tarbre_to_arbre_int t_cont energy in
+      let matrix = make_prec_matrix_server_tree_int t_temp size_t in
+      let t_discrete = optim_discret 1 (t_temp) energy in
+      let b = Sys.time () in
+        (energy_int t_discrete energy, matrix, b -. a)
+

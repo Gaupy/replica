@@ -374,7 +374,53 @@ let script config_file =
             done;
           done
       end
-
+    | 11 -> (* For a lot of vertex (but we note only the time)*)
+      begin
+        for iter = 1 to (param.number_of_tests) do
+          let step = (param.size_of_tree / 20) in
+          if step = 0 then failwith "Not enough nodes, there should be more than 20.";
+          let vertex_number = ref step in
+          while !vertex_number <= (param.size_of_tree) do
+            let tree = match param.tree_type with
+              | _ -> cree_alea (!vertex_number) (param.rmax)
+            in 
+            let first_matrix = make_prec_matrix_full_tree tree (!vertex_number) in
+            let number_heur = 3 in
+            let energy_min = Array.make number_heur max_float in
+            let time_tot = Array.make number_heur 0. in
+            let server_min = Array.make number_heur (-1) in
+            let prec_max = Array.make number_heur 0. in
+            for j = 1 to (!vertex_number) do
+              try 
+                let result_discret_heur0, matrix_heur0, time0 = algo_discret_time 4 tree (!vertex_number) j energy in
+                  time_tot.(0) <- time_tot.(0) +. time0;
+                  if result_discret_heur0 < energy_min.(0) then 
+                    ( energy_min.(0) <- result_discret_heur0 ; server_min.(0)<- j ; prec_max.(0) <- max (prec_max.(0)) (diff_prec first_matrix matrix_heur0) );
+                let result_discret_heur1, matrix_heur1, time1 = algo_discret_time 0 tree (!vertex_number) j energy in
+                  time_tot.(1) <- time_tot.(1) +. time1;
+                  if result_discret_heur1 < energy_min.(1) then 
+                    ( energy_min.(1) <- result_discret_heur1; server_min.(1)<- j; prec_max.(1) <- max (prec_max.(1)) (diff_prec first_matrix matrix_heur1) );
+                let result_discret_heur2, matrix_heur2, time2 = algo_discret_time 3 tree (!vertex_number) j energy in
+                  time_tot.(2) <- time_tot.(2) +. time2;
+                  if result_discret_heur2 < energy_min.(2) then 
+                    ( energy_min.(2) <- result_discret_heur2; server_min.(2)<- j; prec_max.(2) <- max (prec_max.(2)) (diff_prec first_matrix matrix_heur2) );
+              with
+                | OverloadedNode(_,_) -> ()
+            done;
+            let st = sprintf "results/size=%d_idle=%d_speeds=%d_expe=%d_iter=%d.dat" (!vertex_number) (int_of_float energy.static) (param.number_of_speeds) (param.expe_number) iter in 
+            let oo = open_out st in
+            fprintf oo "%d\n%d\n" param.expe_number number_heur;
+            for i= 0 to number_heur -1 do
+              fprintf oo "%d\t%f\t%f\n" server_min.(i) time_tot.(i) prec_max.(i);
+            done;
+            fprintf oo "%d\t%d\n" param.number_of_speeds !vertex_number; 
+            print_set_of_speeds energy oo;
+            print_square_matrix first_matrix oo;
+            close_out oo;
+            vertex_number := !vertex_number + step;
+          done
+        done
+      end
 
 let () = script Sys.argv.(1)
 

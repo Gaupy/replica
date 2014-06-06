@@ -10,8 +10,8 @@
 #read -p 'expe number: ' var9
 cd ..
 echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-make opt
-./comp conf
+ocamlbuild script.native
+./script.native conf
 cd results
 gcc ../LP/new_lp.c -o test -lglpk -fno-stack-protector 
 case $9 in
@@ -37,9 +37,8 @@ case $9 in
 	rm *.log
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	1|5 )
 	for iter in `seq 1 $8`; do
@@ -63,9 +62,8 @@ case $9 in
 	rm *.log
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 #	echo "You have tried an expe_number that is not yet implemented."
 	;;
 	2|6 )
@@ -92,9 +90,8 @@ case $9 in
 	rm *.log
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot static_energy_$5_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7.p
 	;;
 	3|7 )
 	for iter in `seq 1 $8`; do
@@ -114,9 +111,8 @@ case $9 in
 	rm *.log
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot load_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot load_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	8 )
 	for iter in `seq 1 $8`; do
@@ -136,9 +132,8 @@ case $9 in
 	done
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	9 )
 	for iter in `seq 1 $8`; do
@@ -161,9 +156,8 @@ case $9 in
 	done
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot speeds=$4_nodes=$3_rmax=$1_treetype=$2_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score	gnuplot speeds=$4_nodes=$3_rmax=$1_treetype=$2_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	11 )
 	for iter in `seq 1 $8`; do
@@ -176,16 +170,16 @@ case $9 in
 	done
 	for iter in `seq 1 $8`; do
 		for nodes in `seq $r $r $3`; do
-			cat result_${nodes}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
-			echo "\n" >> result_$3_$4_$5_$7_$9.score
+			cat result_${nodes}_${5}_${4}_${9}_${iter}.temp >> time_result_$3_$4_$5_$7_$9.score
+			echo "\n" >> time_result_$3_$4_$5_$7_$9.score
 			rm result_${nodes}_${5}_${4}_${9}_${iter}.temp
 		done
 	done
 	cd ../exploitation_results
 	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
-	make
-	./comp conf < ../results/result_$3_$4_$5_$7_$9.score
-	gnuplot maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	ocamlbuild explo.native
+	./explo.native conf < ../results/time_result_$3_$4_$5_$7_$9.score
+	gnuplot time_maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
 	* ) 
 	echo "You have tried an expe_number that is not yet implemented."
