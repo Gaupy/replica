@@ -256,6 +256,7 @@ let script config_file =
             let vertex_number = (param.size_of_tree) in
             let tree = match param.tree_type with
               | 0 -> cree_alea (vertex_number) (param.rmax)
+              | 2 -> cree_med_alea (vertex_number) (param.rmax)
               | _ -> cree_big_alea (vertex_number) (param.rmax)
             in 
             let first_matrix = make_prec_matrix_full_tree tree (vertex_number) in
