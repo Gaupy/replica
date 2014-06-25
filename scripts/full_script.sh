@@ -187,6 +187,50 @@ case $9 in
 	./explo.native conf < ../results/time_result_$3_$4_$5_$7_$9.score
 	gnuplot time_maxnodes_$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
 	;;
+	12 )
+	for iter in `seq 1 $8`; do
+		./test ${3} $5 $4 $9 ${iter}
+		rm size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}.dat
+		if [ "${3}" -lt 26 ]; then
+			cplex -c "r pbm_size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2 >> result_${3}_${5}_${4}_${9}_${iter}.temp
+		else
+			echo "" >> result_${3}_${5}_${4}_${9}_${iter}.temp
+		fi
+		rm pbm_size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}_general.lp
+	done
+	for iter in `seq 1 $8`; do
+		cat result_${3}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+		rm result_${3}_${5}_${4}_${9}_${iter}.temp
+	done
+	rm *.log
+	cd ../exploitation_results
+	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score
+	gnuplot load_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	;;
+	13)
+	for iter in `seq 1 $8`; do
+		./test ${3} $5 $4 $9 ${iter}
+		rm size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}.dat
+		if [ "${3}" -lt 26 ]; then
+			cplex -c "r pbm_size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}_general.lp" "opt"|grep "Objective ="| cut -d "=" -f 2 >> result_${3}_${5}_${4}_${9}_${iter}.temp
+		else
+			echo "" >> result_${3}_${5}_${4}_${9}_${iter}.temp
+		fi
+		rm pbm_size=${3}_idle=$5_speeds=$4_expe=$9_iter=${iter}_general.lp
+	done
+	for iter in `seq 1 $8`; do
+		cat result_${3}_${5}_${4}_${9}_${iter}.temp >> result_$3_$4_$5_$7_$9.score
+		rm result_${3}_${5}_${4}_${9}_${iter}.temp
+	done
+	rm *.log
+	cd ../exploitation_results
+	echo "$1\n$2\n$3\n$4\n$5\n$6\n$7\n$8\n$9" > conf
+	ocamlbuild explo.native
+	./explo.native conf < ../results/result_$3_$4_$5_$7_$9.score
+	gnuplot maxspeed_nodes=$3_rmax=$1_treetype=$2_nspeed=$4_maxspeed=$6_typespeed=$7_static=$5.p
+	;;
 	* ) 
 	echo "You have tried an expe_number that is not yet implemented."
 	;;
